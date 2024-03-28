@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DashboardNavigation } from "./app/(modules)/(dashboard)/(constants)/navigation/navigation";
+import { DashboardNavigation, nextAuthPrefix } from "./app/(modules)/(dashboard)/(constants)/navigation/navigation";
 import authConfig from "../auth.config";
 import NextAuth from "next-auth";
 
@@ -9,6 +9,13 @@ export default auth((request) => {
   const { pathname } = request.nextUrl;
   const isLoggedIn = !!request.auth;
 
+  const isApiAuthRoute = pathname.startsWith(nextAuthPrefix);
+  const agendaUrl = new URL("/agenda", request.url);
+
+  if (isApiAuthRoute) {
+    return NextResponse.next();
+  }
+
   const protectedRoutes = DashboardNavigation.filter((route) => route.isProtected);
 
   if (protectedRoutes.some((route) => route.href === pathname) && !isLoggedIn) {
@@ -16,12 +23,15 @@ export default auth((request) => {
     return NextResponse.redirect(loginUrl);
   }
 
+  if (pathname === "/auth/sign-in" && isLoggedIn) {
+    return NextResponse.redirect(agendaUrl);
+  }
+
   if (pathname == "/") {
     if (!isLoggedIn) {
       const loginUrl = new URL("/auth/sign-in", request.url);
       return NextResponse.redirect(loginUrl);
     } else {
-      const agendaUrl = new URL("/agenda", request.url);
       return NextResponse.redirect(agendaUrl);
     }
   }

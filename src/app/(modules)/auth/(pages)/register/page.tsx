@@ -14,14 +14,14 @@ import { classNames } from "primereact/utils";
 import { registerUser } from "../../(actions)/register";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
-import { ToastMessage } from "primereact/toast";
+import * as z from "zod";
 
 export default function RegisterPage() {
   const [state, setState] = useState({
     loadingRegister: false,
   });
 
-  const { showToast, handleActionResponse } = useToast();
+  const { handleActionResponse } = useToast();
 
   const router = useRouter();
 
@@ -45,7 +45,7 @@ export default function RegisterPage() {
     trigger();
   }, [trigger]);
 
-  const onSubmit = async (values: any) => {
+  const onSubmit = async (values: z.infer<typeof registerUserSchema>) => {
     setState({ ...state, loadingRegister: true });
     const response = await registerUser(values);
 

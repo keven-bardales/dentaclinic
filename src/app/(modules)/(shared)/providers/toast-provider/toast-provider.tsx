@@ -5,6 +5,7 @@ import { ReactNode, createContext, useRef } from "react";
 const ToastContext = createContext({
   showToast: (message: ToastMessage | ToastMessage[]) => {},
   handleActionResponse: (response: any) => {},
+  handleErrorsList: (errors: string[]) => {},
 });
 
 export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
@@ -19,7 +20,7 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const handleActionResponse = (response: any) => {
-    if (response.errors) {
+    if (response?.errors) {
       const toastMessages: ToastMessage[] = response.errors.map((error: string) => ({
         severity: "error",
         detail: error,
@@ -29,7 +30,7 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
       showToast(toastMessages);
     }
 
-    if (response.success) {
+    if (response?.success) {
       showToast({
         severity: "success",
         detail: response.message,
@@ -38,8 +39,18 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const handleErrorsList = (errors: string[]) => {
+    const toastMessages: ToastMessage[] = errors.map((error: string) => ({
+      severity: "error",
+      detail: error,
+      life: 3000,
+    }));
+
+    showToast(toastMessages);
+  };
+
   return (
-    <ToastContext.Provider value={{ showToast, handleActionResponse }}>
+    <ToastContext.Provider value={{ showToast, handleActionResponse, handleErrorsList }}>
       <Toast ref={toastRef} />
       {children}
     </ToastContext.Provider>

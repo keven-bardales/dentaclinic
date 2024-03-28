@@ -12,13 +12,19 @@ import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { loginUserSchema } from "../../(schemas)/login-user.schema";
 import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
+import { classNames } from "primereact/utils";
+import { useRouter } from "next/navigation";
+import { useSession } from "next-auth/react";
 
 export default function SignInPage() {
   const [state, setState] = useState({
     loadingLogin: false,
   });
 
-  const { handleActionResponse } = useToast();
+  const session = useSession();
+
+  const { handleErrorsList, showToast } = useToast();
+  const router = useRouter();
 
   const {
     control,
@@ -44,7 +50,18 @@ export default function SignInPage() {
     setState({ ...state, loadingLogin: true });
     const response = await login(getValues());
 
-    handleActionResponse(response);
+    if (response?.errors) {
+      handleErrorsList(response.errors);
+    }
+
+    if (response?.success) {
+      showToast({
+        severity: "success",
+        detail: response.message,
+        life: 3000,
+      });
+      router.push("/");
+    }
 
     setState({ ...state, loadingLogin: false });
   };
@@ -88,10 +105,13 @@ export default function SignInPage() {
                           onChange={(e) => {
                             field.onChange(e.target.value);
                           }}
+                          className={classNames({
+                            "p-invalid": fieldState.invalid,
+                          })}
                           id={field.name}
                           placeholder="Email o nombre de usuario"
                         />
-                        <label htmlFor="loginCredential">Email o nombre de usuario</label>
+                        <label htmlFor={field.name}>Email o nombre de usuario</label>
                       </span>
                     </div>
                     <small id={`${field.name}-help`} className="p-error p-d-block">

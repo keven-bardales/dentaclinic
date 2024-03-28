@@ -16,3 +16,5 @@ export const DashboardNavigation = [
     isProtected: true,
   },
 ];
+
+export const nextAuthPrefix = "/api/auth";

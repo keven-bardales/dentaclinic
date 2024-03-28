@@ -3,7 +3,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db/db";
 import credentials from "next-auth/providers/credentials";
 import { loginUserSchema } from "@/app/(modules)/auth/(schemas)/login-user.schema";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
+import { getUserByEmail } from "@/app/(modules)/(user)/(queries)/get-user-by-email";
 
 export default {
   providers: [
@@ -17,15 +18,7 @@ export default {
 
         const { loginCredential, password } = validatedFields.data;
 
-        const user = await db.user.findFirst({
-          where: {
-            OR: [
-              {
-                email: loginCredential,
-              },
-            ],
-          },
-        });
+        const user = await getUserByEmail(loginCredential);
 
         if (!user) {
           return null;
@@ -45,7 +38,6 @@ export default {
       },
     }),
   ],
-  adapter: PrismaAdapter(db),
   pages: {
     signIn: "/auth/signin",
   },

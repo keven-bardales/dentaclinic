@@ -2,6 +2,7 @@ import { signIn } from "next-auth/react";
 import { loginUserSchema } from "../(schemas)/login-user.schema";
 import * as z from "zod";
 import { AuthError } from "next-auth";
+import { auth } from "@/root/auth";
 
 export const login = async (values: z.infer<typeof loginUserSchema>) => {
   const validatedFields = loginUserSchema.safeParse(values);
@@ -28,7 +29,17 @@ export const login = async (values: z.infer<typeof loginUserSchema>) => {
       redirect: false,
     });
 
-    console.log(response);
+    if (response?.error) {
+      return {
+        errors: ["Credenciales inválidas"],
+        success: false,
+      };
+    } else {
+      return {
+        success: true,
+        message: "Inicio de sesión exitoso",
+      };
+    }
   } catch (error) {
     if (error instanceof AuthError) {
       switch (error.type) {
