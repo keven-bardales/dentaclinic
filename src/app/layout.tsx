@@ -3,6 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 
 import MainProviders from "./(modules)/(shared)/providers/main-providers/main-providers";
+import { cn } from "../lib/utils/cn/cn";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,7 +31,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={inter.className}>
+      <body className={cn(inter.className, "bg-surface")}>
         <MainProviders>{children}</MainProviders>
       </body>
     </html>
