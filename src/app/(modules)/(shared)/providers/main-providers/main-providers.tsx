@@ -4,11 +4,13 @@ import { ReactNode } from "react";
 import { PrimeReactProvider } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
 
-import { locale, addLocale, updateLocaleOption, updateLocaleOptions, localeOption, localeOptions } from "primereact/api";
+import { addLocale } from "primereact/api";
 
 import "primereact/resources/themes/lara-dark-blue/theme.css";
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
+import React from "react";
+import { ToastContextProvider } from "../toast-provider/toast-provider";
 
 export default function MainProviders({ children }: { children: ReactNode }) {
   addLocale("es", {
@@ -34,7 +36,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
           locale: "es",
         }}
       >
-        {children}
+        <ToastContextProvider>{children}</ToastContextProvider>
       </PrimeReactProvider>
     </SessionProvider>
   );

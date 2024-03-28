@@ -5,12 +5,49 @@ import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import PassWordToolTip from "../../(components)/password-tooltip";
+import { login } from "../../(actions)/login";
+import { Controller, useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginUserSchema } from "../../(schemas)/login-user.schema";
+import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
 
 export default function SignInPage() {
-  const [checked, setChecked] = useState(false);
-  const [password, setPassword] = useState("");
+  const [state, setState] = useState({
+    loadingLogin: false,
+  });
+
+  const { handleActionResponse } = useToast();
+
+  const {
+    control,
+    formState: { isValid },
+    handleSubmit,
+    trigger,
+    getValues,
+  } = useForm({
+    mode: "onChange",
+    defaultValues: {
+      loginCredential: "",
+      password: "",
+      rememberme: false,
+    },
+    resolver: zodResolver(loginUserSchema),
+  });
+
+  useEffect(() => {
+    trigger();
+  }, [trigger]);
+
+  const handleSignIn = async () => {
+    setState({ ...state, loadingLogin: true });
+    const response = await login(getValues());
+
+    handleActionResponse(response);
+
+    setState({ ...state, loadingLogin: false });
+  };
 
   return (
     <main className="flex items-center justify-center w-full h-screen max-h-screen px-3 sm:px-5">
@@ -35,38 +72,75 @@ export default function SignInPage() {
           </div>
 
           <div className="flex flex-col gap-y-8 mx-auto w-full">
-            <div className="p-inputgroup">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-user"></i>
-              </span>
-              <span className="p-float-label">
-                <InputText id="loginCredential" placeholder="Usuario o correo electrónico" />
-                <label htmlFor="loginCredential">Usuario o correo electrónico</label>
-              </span>
-            </div>
+            <Controller
+              name="loginCredential"
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <div>
+                    <div className="p-inputgroup">
+                      <span className="p-inputgroup-addon">
+                        <i className="pi pi-user"></i>
+                      </span>
+                      <span className="p-float-label">
+                        <InputText
+                          value={field.value}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                          }}
+                          id={field.name}
+                          placeholder="Email o nombre de usuario"
+                        />
+                        <label htmlFor="loginCredential">Email o nombre de usuario</label>
+                      </span>
+                    </div>
+                    <small id={`${field.name}-help`} className="p-error p-d-block">
+                      {fieldState.error?.message}
+                    </small>
+                  </div>
+                );
+              }}
+            />
 
-            <div className="p-inputgroup">
-              <span className="p-inputgroup-addon">
-                <i className="pi pi-user"></i>
-              </span>
-              <span className="p-float-label">
-                <Password
-                  footer={PassWordToolTip}
-                  toggleMask
-                  value={password}
-                  onChange={(e) => {
-                    setPassword(e.target.value);
-                  }}
-                  inputId="password"
-                  placeholder="Contraseña"
-                />
-                <label htmlFor="password">Contraseña</label>
-              </span>
-            </div>
+            <Controller
+              name="password"
+              control={control}
+              render={({ field, fieldState }) => {
+                return (
+                  <div>
+                    <div className="p-inputgroup">
+                      <span className="p-inputgroup-addon">
+                        <i className="pi pi-user"></i>
+                      </span>
+                      <span className="p-float-label">
+                        <Password
+                          footer={PassWordToolTip}
+                          toggleMask
+                          value={field.value}
+                          onChange={(e) => {
+                            field.onChange(e.target.value);
+                          }}
+                          inputId={field.name}
+                          placeholder="Contraseña"
+                        />
+                        <label htmlFor="password">Contraseña</label>
+                      </span>
+                    </div>
+                    <small id={`${field.name}-help`} className="p-error p-d-block">
+                      {fieldState.error?.message}
+                    </small>
+                  </div>
+                );
+              }}
+            />
 
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-x-2">
-                <Checkbox id="rememberme" onChange={(e) => setChecked(e.checked as boolean)} checked={checked} />
+                <Controller
+                  name="rememberme"
+                  control={control}
+                  render={({ field }) => <Checkbox id="rememberme" onChange={(e) => field.onChange(e.checked as boolean)} checked={field.value} />}
+                />
                 <label htmlFor="rememberme">
                   <span>Recuerdame</span>
                 </label>
@@ -77,7 +151,15 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <Button label="Iniciar sesión" icon="pi pi-user" className="w-full" />
+          <Button
+            disabled={!isValid}
+            loading={state.loadingLogin}
+            loadingIcon={<i className="pi pi-spin pi-spinner"></i>}
+            onClick={handleSubmit(handleSignIn)}
+            label="Iniciar sesión"
+            icon="pi pi-user"
+            className="w-full"
+          />
         </div>
       </div>
     </main>

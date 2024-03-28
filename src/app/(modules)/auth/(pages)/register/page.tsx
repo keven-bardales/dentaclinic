@@ -5,29 +5,29 @@ import { Button } from "primereact/button";
 import { Checkbox } from "primereact/checkbox";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PassWordToolTip from "../../(components)/password-tooltip";
 import { useForm, Controller } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { registerUserSchema } from "../../(schemas)/register-user.schema";
 import { classNames } from "primereact/utils";
 import { registerUser } from "../../(actions)/register";
-import { Toast, ToastMessage } from "primereact/toast";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
+import { ToastMessage } from "primereact/toast";
 
 export default function RegisterPage() {
   const [state, setState] = useState({
     loadingRegister: false,
   });
 
-  const toast = useRef<Toast>(null);
+  const { showToast, handleActionResponse } = useToast();
 
-  const show = (message: ToastMessage | ToastMessage[]) => {
-    toast?.current?.show(message);
-  };
+  const router = useRouter();
 
   const {
     control,
-    formState: { errors, isValid },
+    formState: { isValid },
     handleSubmit,
     trigger,
   } = useForm({
@@ -49,31 +49,10 @@ export default function RegisterPage() {
     setState({ ...state, loadingRegister: true });
     const response = await registerUser(values);
 
-    show({
-      severity: "error",
-      summary: "Error",
-      detail: response.error,
-      life: 3000,
-    });
+    handleActionResponse(response);
 
-    if (response.errors) {
-      response.errors.forEach((error) => {
-        show({
-          severity: "error",
-          summary: "Error",
-          detail: error,
-          life: 3000,
-        });
-      });
-    }
-
-    if (response.message) {
-      show({
-        severity: "success",
-        summary: "Éxito",
-        detail: response.message,
-        life: 3000,
-      });
+    if (response.success) {
+      router.push("/auth/sign-in");
     }
 
     setState({ ...state, loadingRegister: false });
@@ -81,7 +60,6 @@ export default function RegisterPage() {
 
   return (
     <main className="flex items-center justify-center w-full h-screen max-h-screen px-3 sm:px-5">
-      <Toast ref={toast} />
       <div className="overflow-auto w-full flex justify-center h-[90%]">
         <div className="p-4 shadow-2xl bg-surface-card rounded-lg min-w-[250px] max-w-[550px] h-full w-full flex flex-col gap-y-8 overflow-auto">
           <div className="text-center gap-y-3 w-full flex flex-col justify-center items-center">
@@ -205,11 +183,13 @@ export default function RegisterPage() {
                   <div className="flex items-center gap-x-2">
                     <Checkbox
                       checked={field.value}
-                      id={field.name}
+                      inputRef={field.ref}
+                      inputId={field.name}
                       onChange={(e) => {
-                        field.onChange(e.checked as boolean);
+                        field.onChange(e.checked);
                       }}
                     />
+
                     <label htmlFor={field.name}>
                       <span>Recuérdame</span>
                     </label>

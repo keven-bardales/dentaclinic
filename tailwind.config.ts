@@ -44,6 +44,9 @@ const config: Config = {
       textColor: {
         highlight: "var(--highlight-text-color)",
       },
+      gridTemplateColumns: {
+        navbar: "250px 1fr",
+      },
     },
   },
   plugins: [],

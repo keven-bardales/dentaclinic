@@ -2,6 +2,8 @@
 import * as z from "zod";
 import { registerUserSchema } from "../(schemas)/register-user.schema";
 import { db } from "@/lib/db/db";
+import bcrypt from "bcrypt";
+import { getUserByEmail } from "../../(user)/(queries)/get-user-by-email";
 
 export const registerUser = async (values: z.infer<typeof registerUserSchema>) => {
   const validatedFields = registerUserSchema.safeParse(values);
@@ -14,32 +16,32 @@ export const registerUser = async (values: z.infer<typeof registerUserSchema>) =
     });
 
     return {
-      error: "Error al registrar usuario",
       errors,
+      success: false,
     };
   }
 
   const { email, password, name } = validatedFields.data;
 
-  const existingUser = await db.user.findUnique({
-    where: {
-      email,
-    },
-  });
+  const existingUser = await getUserByEmail(email);
 
   if (existingUser) {
     return {
-      error: "El usuario ya existe",
+      errors: ["El email ya está registrado"],
     };
   }
+
+  const hashedPassword = await bcrypt.hash(password, 10);
 
   await db.user.create({
     data: {
       email,
-      password,
+      password: hashedPassword,
       name,
     },
   });
 
-  return { message: "Usuario registrado correctamente" };
+  // TODO: Send email confirmation
+
+  return { message: "Usuario registrado correctamente", success: true };
 };

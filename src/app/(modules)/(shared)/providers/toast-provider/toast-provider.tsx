@@ -1,0 +1,57 @@
+import { Toast, ToastMessage } from "primereact/toast";
+import React from "react";
+import { ReactNode, createContext, useRef } from "react";
+
+const ToastContext = createContext({
+  showToast: (message: ToastMessage | ToastMessage[]) => {},
+  handleActionResponse: (response: any) => {},
+});
+
+export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
+  const toastRef = useRef<Toast>(null);
+
+  const showToast = (message: ToastMessage | ToastMessage[]) => {
+    if (!toastRef?.current) {
+      return;
+    }
+
+    toastRef?.current?.show(message);
+  };
+
+  const handleActionResponse = (response: any) => {
+    if (response.errors) {
+      const toastMessages: ToastMessage[] = response.errors.map((error: string) => ({
+        severity: "error",
+        detail: error,
+        life: 3000,
+      }));
+
+      showToast(toastMessages);
+    }
+
+    if (response.success) {
+      showToast({
+        severity: "success",
+        detail: response.message,
+        life: 3000,
+      });
+    }
+  };
+
+  return (
+    <ToastContext.Provider value={{ showToast, handleActionResponse }}>
+      <Toast ref={toastRef} />
+      {children}
+    </ToastContext.Provider>
+  );
+};
+
+export const useToast = () => {
+  const context = React.useContext(ToastContext);
+
+  if (context === undefined) {
+    throw new Error("useToast must be used within a ToastContextProvider");
+  }
+
+  return context;
+};
