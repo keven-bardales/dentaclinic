@@ -1,6 +1,6 @@
 export default function AgendaPage() {
   return (
-    <div className="bg-red-400 text-white grow w-full">
+    <div className="grow w-full p-4">
       <h1>Agenda Page</h1>
     </div>
   );

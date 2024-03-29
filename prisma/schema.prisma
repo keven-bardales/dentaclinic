@@ -19,7 +19,7 @@ model Module {
   description       String?
   createdAt         DateTime           @default(now())
   updatedAt         DateTime           @updatedAt
-  ModulePermissions ModulePermission[]
+  modulePermissions ModulePermission[]
 }
 
 model ModulePermission {
@@ -29,7 +29,7 @@ model ModulePermission {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
   module          Module            @relation(fields: [moduleId], references: [id])
-  RolePermissions RolePermissions[]
+  rolePermissions RolePermissions[]
 }
 
 model RolePermissions {
@@ -48,8 +48,8 @@ model Role {
   description     String?
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
-  RolePermissions RolePermissions[]
-  UserRoles       UserRoles[]
+  rolePermissions RolePermissions[]
+  userRoles       UserRoles[]
 }
 
 model Account {
@@ -94,7 +94,7 @@ model User {
   updatedAt     DateTime    @updatedAt
   accounts      Account[]
   sessions      Session[]
-  UserRoles     UserRoles[]
+  userRoles     UserRoles[]
 }
 
 model UserRoles {
