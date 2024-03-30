@@ -1,6 +1,6 @@
 export default function PatientsPage() {
   return (
-    <div className="bg-red-400 text-white grow w-full">
+    <div className=" grow w-full p-3 px-5">
       <h1>Patients Page</h1>
     </div>
   );

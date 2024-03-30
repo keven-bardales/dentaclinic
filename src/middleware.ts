@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { DashboardNavigation, nextAuthPrefix } from "./app/(modules)/(dashboard)/(constants)/navigation/navigation";
+import { flattenedRoutes, nextAuthPrefix } from "./app/(modules)/(dashboard)/(constants)/navigation/navigation";
 import authConfig from "../auth.config";
 import NextAuth from "next-auth";
 
@@ -16,9 +16,11 @@ export default auth((request) => {
     return NextResponse.next();
   }
 
-  const protectedRoutes = DashboardNavigation.filter((route) => route.isProtected);
+  const mainRoutes = flattenedRoutes;
 
-  if (protectedRoutes.some((route) => route.href === pathname) && !isLoggedIn) {
+  const protectedRoutes = mainRoutes.filter((route) => route.isProtected);
+
+  if (protectedRoutes.some((route) => route?.href.includes(pathname)) && !isLoggedIn) {
     const loginUrl = new URL("/auth/sign-in", request.url);
     return NextResponse.redirect(loginUrl);
   }

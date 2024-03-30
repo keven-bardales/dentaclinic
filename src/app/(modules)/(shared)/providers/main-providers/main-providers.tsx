@@ -7,7 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { addLocale } from "primereact/api";
 
 import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/themes/lara-dark-blue/theme.css";
+// import "primereact/resources/themes/lara-dark-blue/theme.css";
 
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
@@ -36,6 +36,20 @@ export default function MainProviders({ children }: { children: ReactNode }) {
         value={{
           ripple: true,
           locale: "es",
+          pt: {
+            overlaypanel: {
+              content: {
+                className: "!p-0",
+              },
+            },
+            paginator: {
+              RPPDropdown: {
+                wrapper: {
+                  className: "scrollbar-thin",
+                },
+              },
+            },
+          },
         }}
       >
         <ToastContextProvider>{children}</ToastContextProvider>

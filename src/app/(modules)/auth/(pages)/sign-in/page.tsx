@@ -21,8 +21,6 @@ export default function SignInPage() {
     loadingLogin: false,
   });
 
-  const session = useSession();
-
   const { handleErrorsList, showToast } = useToast();
   const router = useRouter();
 

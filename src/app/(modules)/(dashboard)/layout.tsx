@@ -1,18 +1,19 @@
-import SignOutButton from "../auth/(components)/sign-out-button";
+import Avatar from "./(components)/avatar";
+import ClosingSessionLoader from "./(components)/closing-session";
 import MainContentWrapper from "./(components)/main-content-wrapper";
 import SidebarButton from "./(components)/sidebar";
-import ThemeSwitcher from "./(components)/theme-switcher";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className="w-full h-screen flex max-h-screen">
+      <ClosingSessionLoader />
       <MainContentWrapper>
-        <header className="w-full p-3 max-h-[100px] flex justify-between items-center">
+        <header className="w-full p-3 px-5 max-h-[80px] border-b flex justify-between items-center">
           <SidebarButton />
-          <SignOutButton />
+          <Avatar />
         </header>
-        <div className="overflow-auto flex flex-col grow h-full w-full">{children}</div>
-        <footer className="p-3 max-h-[100px]">Footer</footer>
+        <div className="overflow-auto scrollbar-thin flex flex-col grow h-full w-full">{children}</div>
+        <footer className="p-3 px-5 max-h-[80px]">Footer</footer>
       </MainContentWrapper>
     </main>
   );

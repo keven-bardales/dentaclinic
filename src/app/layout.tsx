@@ -18,7 +18,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html className="scrollbar-thumb-[#5898E6] scrollbar-track-[#1F2937]" lang="en">
       <head>
         <script
           dangerouslySetInnerHTML={{

@@ -1,6 +1,4 @@
 import type { NextAuthConfig } from "next-auth";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { db } from "@/lib/db/db";
 import credentials from "next-auth/providers/credentials";
 import { loginUserSchema } from "@/app/(modules)/auth/(schemas)/login-user.schema";
 import bcrypt from "bcryptjs";
@@ -43,24 +41,12 @@ export default {
     signIn: "/auth/signin",
   },
   events: {
-    signIn: async (message) => {
-      console.log("signIn", message);
-    },
-    signOut: async (message) => {
-      console.log("signOut", message);
-    },
-    createUser: async (message) => {
-      console.log("createUser", message);
-    },
-    updateUser: async (message) => {
-      console.log("updateUser", message);
-    },
-    linkAccount: async (message) => {
-      console.log("linkAccount", message);
-    },
-    session: async (message) => {
-      console.log("session", message);
-    },
+    signIn: async (message) => {},
+    signOut: async (message) => {},
+    createUser: async (message) => {},
+    updateUser: async (message) => {},
+    linkAccount: async (message) => {},
+    session: async (message) => {},
   },
   callbacks: {
     authorized: async ({ auth, request }) => {

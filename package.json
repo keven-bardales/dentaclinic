@@ -2,15 +2,20 @@
   "name": "denta-clinic",
   "version": "0.1.0",
   "private": true,
+  "prisma": {
+    "seed": "ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+  },
   "scripts": {
-    "dev": "next dev --turbo",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
   },
   "dependencies": {
     "@auth/prisma-adapter": "^1.5.1",
+    "@faker-js/faker": "^8.4.1",
     "@hookform/resolvers": "^3.3.4",
+    "@ngneat/falso": "^7.2.0",
     "@prisma/client": "^5.11.0",
     "bcryptjs": "^2.4.3",
     "clsx": "^2.1.0",
@@ -22,12 +27,13 @@
     "react-dom": "^18",
     "react-hook-form": "^7.51.2",
     "tailwind-merge": "^2.2.2",
+    "tailwind-scrollbar": "^3.1.0",
     "zod": "^3.22.4",
     "zustand": "^4.5.2"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.6",
-    "@types/node": "^20",
+    "@types/node": "^20.11.30",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "autoprefixer": "^10.0.1",
@@ -36,6 +42,7 @@
     "postcss": "^8",
     "prisma": "^5.11.0",
     "tailwindcss": "^3.3.0",
-    "typescript": "^5"
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.3"
   }
 }
