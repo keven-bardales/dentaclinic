@@ -27,6 +27,7 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
 
   const {
     control,
+    getValues,
     formState: { isValid },
     handleSubmit,
     trigger,
@@ -55,7 +56,14 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
       >
         Cancelar
       </Button>
-      <Button onClick={handleSubmit(() => {})} className="p-button p-button-primary" disabled={!isValid || state.isCreatingModule}>
+      <Button
+        type="submit"
+        onClick={handleSubmit(() => {
+          createNewModule(getValues());
+        })}
+        className="p-button p-button-primary"
+        disabled={!isValid || state.isCreatingModule}
+      >
         Guardar
       </Button>
     </div>
@@ -70,7 +78,6 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
     if (response?.success) {
       setVisible(false);
       router.refresh();
-      router.push(`/settings/modules`);
     }
 
     setState({ ...state, isCreatingModule: false });

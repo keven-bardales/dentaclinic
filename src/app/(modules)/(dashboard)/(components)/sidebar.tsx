@@ -6,7 +6,7 @@ import { SidebarModes, useDashboardStore } from "../stores/dashboard-store";
 import { cn } from "@/lib/utils/cn/cn";
 import { StyleClass } from "primereact/styleclass";
 import { Ripple } from "primereact/ripple";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import RenderIf from "@/lib/utils/cn/render-if";
 import { DashboardNavigation } from "../(constants)/navigation/navigation";
 import Link from "next/link";
@@ -19,9 +19,9 @@ const Module = ({ item, index }: { item: (typeof DashboardNavigation)[0]; index:
   return (
     <li>
       <StyleClass selector="@next" enterFromClassName="hidden" leaveToClassName="hidden" nodeRef={moduleRef}>
-        <div ref={moduleRef} className="p-ripple p-3 flex items-center justify-between cursor-pointer font-bold">
+        <div ref={moduleRef} className="p-ripple px-3 py-1 flex items-center justify-between cursor-pointer font-bold">
           <RenderIf condition={sidebarMode == SidebarModes.OPEN}>
-            <span className="font-medium">{item.title}</span>
+            <span className="font-bold">{item.title}</span>
           </RenderIf>
           <i className="pi pi-chevron-down"></i>
           <Ripple />
@@ -115,36 +115,78 @@ const ModuleItemWithChildren = ({ child, index }: { child: (typeof DashboardNavi
 
 export default function SidebarButton() {
   const sidebarMode = useDashboardStore((state) => state.sidebarMode);
+  const isMobile = useDashboardStore((state) => state.isMobile);
   const setSidebarMode = useDashboardStore((state) => state.setSidebarMode);
+  const setIsMobile = useDashboardStore((state) => state.setIsMobile);
+
+  useEffect(() => {
+    const mediaQuery = window.matchMedia("(max-width: 768px)");
+
+    const handleMediaQueryChange = (event: any) => {
+      if (event.matches) {
+        setSidebarMode(SidebarModes.HIDDEN);
+        setIsMobile(true);
+      } else {
+        setIsMobile(false);
+      }
+    };
+
+    mediaQuery.addEventListener("change", handleMediaQueryChange);
+
+    handleMediaQueryChange(mediaQuery);
+
+    return () => {
+      mediaQuery.removeEventListener("change", handleMediaQueryChange);
+    };
+  }, [setIsMobile, setSidebarMode]);
 
   return (
     <>
       <PrimeSidebar
-        showCloseIcon={false}
-        dismissable={false}
+        autoFocus={false}
+        dismissable={isMobile ? true : false}
         className={cn({
           "bg-surface": true,
           "transition-all duration-300": true,
           "w-[18rem]": sidebarMode == SidebarModes.OPEN,
         })}
-        modal={false}
+        modal={isMobile ? true : false}
         appendTo={"self"}
         onHide={() => {
           setSidebarMode(SidebarModes.HIDDEN);
         }}
         visible={sidebarMode != SidebarModes.HIDDEN}
-        content={({}) => (
-          <div className="min-h-screen flex relative lg:static w-full">
-            <div className="overflow-y-auto w-full">
-              {DashboardNavigation.map((item, index) => (
-                <ul className="list-none p-3 m-0" key={`${item.title}-${index}`}>
-                  <Module item={item} index={index} />
-                </ul>
-              ))}
+        content={({ closeIconRef, hide }) => (
+          <>
+            <div className="min-h-screen flex flex-col relative lg:static w-full">
+              <div className="flex w-full justify-between p-3 items-center">
+                <span className="font-bold text-xl">Menu</span>
+
+                <Button type="button" autoFocus={false} ref={closeIconRef as any} onClick={(e) => hide(e)} text icon="pi pi-times" rounded></Button>
+                <Button
+                  className="hidden"
+                  type="button"
+                  autoFocus={false}
+                  ref={closeIconRef as any}
+                  onClick={(e) => hide(e)}
+                  text
+                  icon="pi pi-times"
+                  rounded
+                ></Button>
+              </div>
+
+              <div className="overflow-y-auto w-full">
+                {DashboardNavigation.map((item, index) => (
+                  <ul className="list-none p-3 m-0" key={`${item.title}-${index}`}>
+                    <Module item={item} index={index} />
+                  </ul>
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
       ></PrimeSidebar>
+
       <Button
         rounded
         text

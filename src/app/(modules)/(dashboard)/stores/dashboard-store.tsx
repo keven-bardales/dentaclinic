@@ -13,11 +13,15 @@ type DashboardStore = {
   setSidebarMode: (mode: SidebarModes) => void;
   isClosingSession: boolean;
   setClosingSession: (isClosingSession: boolean) => void;
+  isMobile: boolean;
+  setIsMobile: (isMobile: boolean) => void;
 };
 
 export const useDashboardStore = create<DashboardStore>()(
   persist(
     (set, get) => ({
+      setIsMobile: (isMobile) => set({ isMobile }),
+      isMobile: false,
       setClosingSession: (isClosingSession) => set({ isClosingSession }),
       isClosingSession: false,
       sidebarMode: SidebarModes.HIDDEN,

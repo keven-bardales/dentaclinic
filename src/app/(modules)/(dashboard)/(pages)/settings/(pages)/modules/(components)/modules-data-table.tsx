@@ -1,16 +1,20 @@
 "use client";
-import { Module, Prisma } from "@prisma/client";
+import { Prisma } from "@prisma/client";
 import { DataTable } from "primereact/datatable";
 import { getModules } from "../(queries)/getModules";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { useState } from "react";
-import { Dialog } from "primereact/dialog";
 import NewModuleModal from "./new-module-modal";
+import BaseModal from "@/app/(modules)/(shared)/components/base-modal";
+import { CreateModuleDialog } from "./create-module-permission";
 
 export default function ModulesDataTable({ modules }: { modules: Prisma.PromiseReturnType<typeof getModules> }) {
   const [createModuleDialog, setCreateModuleDialog] = useState(false);
-  const [expandedRows, setExpandedRows] = useState([]);
+  const [createPermissionDialog, setCreatePermissionDialog] = useState(false);
+  const [expandedRows, setExpandedRows] = useState<
+    Prisma.PromiseReturnType<typeof getModules>[0][] | Prisma.PromiseReturnType<typeof getModules>[0][]
+  >();
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -25,25 +29,51 @@ export default function ModulesDataTable({ modules }: { modules: Prisma.PromiseR
     </div>
   );
 
-  const rowExpansionHeader = (
-    <div className="flex justify-between items-center flex-wrap gap-2">
-      <span className="font-bold">Permisos</span>
-    </div>
-  );
-
   const rowExpansionTemplate = (data: Prisma.PromiseReturnType<typeof getModules>[0]) => {
     const rowExpansionHeader = (
-      <div className="flex justify-between items-center flex-wrap gap-2">
-        <span className="font-bold">Permisos de modulo {data.name}</span>
-      </div>
+      <>
+        <div className="flex justify-between items-center flex-wrap gap-2">
+          <span className="font-bold">Permisos de modulo {data.name}</span>
+          <Button
+            icon="pi pi-plus"
+            onClick={(e) => {
+              setCreatePermissionDialog(true);
+            }}
+            label="Nuevo Permiso"
+          />
+        </div>
+        <BaseModal
+          primeReactDialogProps={{
+            header: `Crear permiso para modulo ${data.name}`,
+            className: "min-w-[300px] w-full max-w-[600px]",
+          }}
+          component={CreateModuleDialog}
+          data={{
+            id: "1",
+            module: data,
+          }}
+          onClose={(data) => {}}
+          setVisible={setCreatePermissionDialog}
+          visible={createPermissionDialog}
+        />
+      </>
     );
 
     return (
-      <DataTable header={rowExpansionHeader} value={data.modulePermissions ?? []} stripedRows paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
-        <Column field="id" header="Id" />
-        <Column field="name" header="Nombre" />
-        <Column field="description" header="Descripción" />
-      </DataTable>
+      <>
+        <DataTable
+          header={rowExpansionHeader}
+          value={data.modulePermissions ?? []}
+          stripedRows
+          paginator
+          rows={5}
+          rowsPerPageOptions={[5, 10, 25, 50]}
+        >
+          <Column field="id" header="Id" />
+          <Column field="name" header="Nombre" />
+          <Column field="description" header="Descripción" />
+        </DataTable>
+      </>
     );
   };
 
@@ -54,11 +84,12 @@ export default function ModulesDataTable({ modules }: { modules: Prisma.PromiseR
   return (
     <>
       {" "}
-      <DataTable
+      <DataTable<Prisma.PromiseReturnType<typeof getModules>>
         dataKey="id"
+        scrollable
+        scrollHeight="calc(100vh - 280px)"
         onRowToggle={(e) => {
-          console.log(e);
-          setExpandedRows(e.data);
+          setExpandedRows(e.data as any);
         }}
         expandedRows={expandedRows}
         rowExpansionTemplate={rowExpansionTemplate}

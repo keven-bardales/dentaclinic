@@ -49,6 +49,11 @@ export default function MainProviders({ children }: { children: ReactNode }) {
                 },
               },
             },
+            datatable: {
+              wrapper: {
+                className: "scrollbar-thin",
+              },
+            },
           },
         }}
       >

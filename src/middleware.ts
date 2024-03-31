@@ -11,6 +11,7 @@ export default auth((request) => {
 
   const isApiAuthRoute = pathname.startsWith(nextAuthPrefix);
   const agendaUrl = new URL("/agenda", request.url);
+  const loginUrl = new URL("/auth/sign-in", request.url);
 
   if (isApiAuthRoute) {
     return NextResponse.next();
@@ -21,17 +22,19 @@ export default auth((request) => {
   const protectedRoutes = mainRoutes.filter((route) => route.isProtected);
 
   if (protectedRoutes.some((route) => route?.href.includes(pathname)) && !isLoggedIn) {
-    const loginUrl = new URL("/auth/sign-in", request.url);
     return NextResponse.redirect(loginUrl);
   }
 
-  if (pathname === "/auth/sign-in" && isLoggedIn) {
+  if ((pathname === "/auth/sign-in" || pathname === "/auth") && isLoggedIn) {
     return NextResponse.redirect(agendaUrl);
+  }
+
+  if (pathname === "/auth" && !isLoggedIn) {
+    return NextResponse.redirect(loginUrl);
   }
 
   if (pathname == "/") {
     if (!isLoggedIn) {
-      const loginUrl = new URL("/auth/sign-in", request.url);
       return NextResponse.redirect(loginUrl);
     } else {
       return NextResponse.redirect(agendaUrl);
