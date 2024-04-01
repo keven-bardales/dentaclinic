@@ -35,6 +35,7 @@ export const useDashboardStore = create<DashboardStore>()(
     }),
     {
       name: "dashboard-store",
+      partialize: (state) => Object.fromEntries(Object.entries(state).filter(([key]) => !["isClosingSession"].includes(key))),
     }
   )
 );

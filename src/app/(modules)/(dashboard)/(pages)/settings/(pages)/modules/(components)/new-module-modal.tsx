@@ -23,8 +23,6 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
     isCreatingModule: false,
   });
 
-  const router = useRouter();
-
   const {
     control,
     getValues,
@@ -77,7 +75,6 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
 
     if (response?.success) {
       setVisible(false);
-      router.refresh();
     }
 
     setState({ ...state, isCreatingModule: false });

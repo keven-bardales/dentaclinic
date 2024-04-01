@@ -4,7 +4,7 @@ import * as z from "zod";
 import { newModuleSchema } from "../(schemas)/new-module-schema";
 import { getModuleByName } from "../(queries)/getModuleByName";
 import { db } from "@/lib/db/db";
-import { revalidatePath } from "next/cache";
+import { revalidateTag } from "next/cache";
 
 export default async function newModule(payload: z.infer<typeof newModuleSchema>) {
   try {
@@ -51,7 +51,7 @@ export default async function newModule(payload: z.infer<typeof newModuleSchema>
       },
     });
 
-    revalidatePath("settings/modules", "layout");
+    revalidateTag("modules");
 
     return {
       message: "Módulo creado exitosamente",

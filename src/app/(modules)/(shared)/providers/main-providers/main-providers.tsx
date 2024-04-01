@@ -1,5 +1,5 @@
 "use client";
-import { ReactNode } from "react";
+import { ReactNode, Suspense } from "react";
 
 import { PrimeReactProvider } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
@@ -13,6 +13,7 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import React from "react";
 import { ToastContextProvider } from "../toast-provider/toast-provider";
+import { NavigationEvents } from "../../components/navigation-events";
 
 export default function MainProviders({ children }: { children: ReactNode }) {
   addLocale("es", {
@@ -57,7 +58,12 @@ export default function MainProviders({ children }: { children: ReactNode }) {
           },
         }}
       >
-        <ToastContextProvider>{children}</ToastContextProvider>
+        <ToastContextProvider>
+          {children}
+          <Suspense fallback={null}>
+            <NavigationEvents />
+          </Suspense>
+        </ToastContextProvider>
       </PrimeReactProvider>
     </SessionProvider>
   );

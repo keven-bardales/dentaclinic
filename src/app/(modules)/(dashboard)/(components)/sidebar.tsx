@@ -3,11 +3,11 @@
 import { Sidebar as PrimeSidebar } from "primereact/sidebar";
 import { Button } from "primereact/button";
 import { SidebarModes, useDashboardStore } from "../stores/dashboard-store";
-import { cn } from "@/lib/utils/cn/cn";
+import { cn } from "@/lib/utils/cn";
 import { StyleClass } from "primereact/styleclass";
 import { Ripple } from "primereact/ripple";
 import { useEffect, useRef } from "react";
-import RenderIf from "@/lib/utils/cn/render-if";
+import RenderIf from "@/lib/utils/render-if";
 import { DashboardNavigation } from "../(constants)/navigation/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

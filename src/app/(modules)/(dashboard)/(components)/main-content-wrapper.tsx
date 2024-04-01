@@ -1,6 +1,6 @@
 "use client";
 
-import { cn } from "@/lib/utils/cn/cn";
+import { cn } from "@/lib/utils/cn";
 import { SidebarModes, useDashboardStore } from "../stores/dashboard-store";
 
 export default function MainContentWrapper({ children }: { children: React.ReactNode }) {
