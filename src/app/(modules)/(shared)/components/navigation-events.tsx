@@ -11,8 +11,6 @@ export function NavigationEvents() {
   const router = useRouter();
 
   useEffect(() => {
-    console.log("pathname", pathname);
-
     router.refresh();
   }, [pathname]);
 

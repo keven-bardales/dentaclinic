@@ -3,7 +3,10 @@ import { Dialog, DialogProps } from "primereact/dialog";
 
 export type ModalChildProps<T, K> = {
   data: T | null;
-  onClose: (data?: K) => void;
+  onHide: (data?: K) => void;
+  visible: boolean;
+  setVisible: (visible: boolean) => void;
+  primeReactDialogProps?: Omit<DialogProps, "onHide">;
 };
 
 export type BaseModalComponent<T, K> = React.ComponentType<ModalChildProps<T, K>>;
@@ -16,6 +19,7 @@ export type BaseModalProps<T, K> = {
   onOpen?: () => void;
   primeReactDialogProps?: Omit<DialogProps, "onHide">;
   onClose?: (data?: K) => void;
+  children?: React.ReactNode;
 };
 
 export default function BaseModal<T, K>({
@@ -26,6 +30,7 @@ export default function BaseModal<T, K>({
   onClose,
   setVisible,
   primeReactDialogProps,
+  children,
 }: BaseModalProps<T, K>) {
   useEffect(() => {
     if (onOpen) {

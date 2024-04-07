@@ -52,6 +52,7 @@ export default async function newModule(payload: z.infer<typeof newModuleSchema>
     });
 
     revalidateTag("modules");
+    revalidateTag("permissions");
 
     return {
       message: "Módulo creado exitosamente",

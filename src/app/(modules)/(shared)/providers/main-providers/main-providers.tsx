@@ -54,6 +54,9 @@ export default function MainProviders({ children }: { children: ReactNode }) {
               wrapper: {
                 className: "scrollbar-thin",
               },
+              bodyRow: {
+                className: "!p-0",
+              },
             },
           },
         }}

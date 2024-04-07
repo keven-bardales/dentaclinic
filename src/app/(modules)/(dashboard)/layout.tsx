@@ -3,8 +3,6 @@ import ClosingSessionLoader from "./(components)/closing-session";
 import MainContentWrapper from "./(components)/main-content-wrapper";
 import SidebarButton from "./(components)/sidebar";
 
-export const dynamic = "force-dynamic";
-
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (
     <main className="w-full h-screen flex max-h-screen">

@@ -6,7 +6,6 @@ import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { useState } from "react";
 import NewModuleModal from "./new-module-modal";
-import BaseModal from "@/app/(modules)/(shared)/components/base-modal";
 import { CreateModuleDialog } from "./create-module-permission";
 
 export default function ModulesDataTable({ modules }: { modules: Prisma.PromiseReturnType<typeof getModules> }) {
@@ -42,19 +41,17 @@ export default function ModulesDataTable({ modules }: { modules: Prisma.PromiseR
             label="Nuevo Permiso"
           />
         </div>
-        <BaseModal
-          primeReactDialogProps={{
-            header: `Crear permiso para modulo ${data.name}`,
-            className: "min-w-[300px] w-full max-w-[600px]",
-          }}
-          component={CreateModuleDialog}
+        <CreateModuleDialog
+          visible={createPermissionDialog}
           data={{
-            id: "1",
+            id: data.id,
             module: data,
           }}
-          onClose={(data) => {}}
+          onHide={() => {}}
           setVisible={setCreatePermissionDialog}
-          visible={createPermissionDialog}
+          primeReactDialogProps={{
+            className: "p-0 w-full min-w-[300px] max-w-[600px]",
+          }}
         />
       </>
     );

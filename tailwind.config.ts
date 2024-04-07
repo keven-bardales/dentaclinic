@@ -13,6 +13,17 @@ const config: Config = {
   ],
   theme: {
     extend: {
+      fontSize: {
+        "2xs": "0.625rem",
+        "3xs": "0.4rem",
+        sm: "0.6rem",
+        base: "0.8rem",
+        xl: "1.10rem",
+        "2xl": "1.25rem",
+        "3xl": "1.50rem",
+        "4xl": "2rem",
+        "5xl": "3rem",
+      },
       colors: {
         surface: "var(--surface-ground)",
         "surface-section": "var(--surface-section)",
