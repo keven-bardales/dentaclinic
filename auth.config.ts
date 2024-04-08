@@ -1,8 +1,7 @@
 import type { NextAuthConfig } from "next-auth";
 import credentials from "next-auth/providers/credentials";
 import { loginUserSchema } from "@/app/(modules)/auth/(schemas)/login-user.schema";
-import bcrypt from "bcryptjs";
-import { getUserByEmail } from "@/app/(modules)/(user)/(queries)/get-user-by-email";
+import { LoginUseCase } from "@/features/user/domain/use-cases/login.use-case";
 
 export default {
   trustHost: true,
@@ -17,23 +16,13 @@ export default {
 
         const { loginCredential, password } = validatedFields.data;
 
-        const user = await getUserByEmail(loginCredential);
+        const result = await new LoginUseCase().execute(loginCredential, password);
 
-        if (!user) {
+        if (!result) {
           return null;
         }
 
-        if (!user.password) {
-          return null;
-        }
-
-        const isValid = await bcrypt.compare(password, user.password);
-
-        if (!isValid) {
-          return null;
-        }
-
-        return user;
+        return result;
       },
     }),
   ],

@@ -1,7 +1,8 @@
 import { BaseRepository } from "../../domain/repositories/base-repository";
 import { BaseDataSource } from "../../domain/datasource/base-datasource";
+import { BaseEntity } from "../../domain/entities/base.entity";
 
-export class BaseRepositoryImpl<T> extends BaseRepository<T> {
+export class BaseRepositoryImpl<T extends BaseEntity> extends BaseRepository<T> {
   constructor(public dataSource: BaseDataSource<T>) {
     super();
   }

@@ -1,3 +1,4 @@
+import { PrismaClient } from "@prisma/client/extension";
 import { IRead } from "../repository-generics/iRead";
 import { IWrite } from "../repository-generics/iWrite.interface";
 

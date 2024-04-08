@@ -1,4 +1,4 @@
-import BasicPageWrapper from "@/app/(modules)/(dashboard)/(components)/basic-page-wrapper";
+import BasicPageWrapper from "@/app/(modules)/(dashboard)/components/basic-page-wrapper";
 
 export default function UsersPage() {
   return (

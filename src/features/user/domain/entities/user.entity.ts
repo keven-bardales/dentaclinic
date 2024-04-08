@@ -1,9 +1,12 @@
 import { AccountEntity } from "@/features/account/domain/entities/account.entity";
+import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { SessionEntity } from "@/features/session/domain/entities/session.entity";
 import { UserRoleEntity } from "@/features/userRoles/domain/entities/userRole.entity";
 
-export class UserEntity {
+export class UserEntity extends BaseEntity {
+  static tableName = "user";
+
   constructor(
     public id: string,
     public name: string,
@@ -17,14 +20,13 @@ export class UserEntity {
     public sessions?: SessionEntity[],
     public userRoles?: UserRoleEntity[]
   ) {
-    this.id = id;
+    super(id, createdAt, updatedAt, UserEntity.tableName);
+
     this.name = name;
     this.email = email;
     this.emailVerified = emailVerified;
     this.image = image;
     this.password = password;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.accounts = accounts;
     this.sessions = sessions;
     this.userRoles = userRoles;

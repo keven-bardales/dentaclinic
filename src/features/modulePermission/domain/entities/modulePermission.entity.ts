@@ -5,16 +5,16 @@ import { RolePermissionEntity } from "@/features/rolePermission/domain/entities/
 export class ModulePermissionEntity {
   constructor(
     public id: number,
+    public name: string,
     public moduleId: number,
-    public permissionId: number,
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper,
     public module?: ModuleEntity | null,
     public rolePermissions?: RolePermissionEntity[]
   ) {
     this.id = id;
+    this.name = name;
     this.moduleId = moduleId;
-    this.permissionId = permissionId;
     this.createdAt = createdAt;
     this.updatedAt = updatedAt;
     this.module = module;
@@ -24,8 +24,8 @@ export class ModulePermissionEntity {
   static create(obj: any) {
     return new ModulePermissionEntity(
       obj.id,
+      obj.name,
       obj.moduleId,
-      obj.permissionId,
       new DateWrapper(obj.createdAt),
       new DateWrapper(obj.updatedAt),
       obj.module ? ModuleEntity.create(obj.module) : null,

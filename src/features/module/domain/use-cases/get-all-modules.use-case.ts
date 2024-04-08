@@ -1,12 +1,10 @@
-import { BaseRepository } from "@/features/common/domain/repositories/base-repository";
 import { ModuleEntity } from "../entities/module.entity";
+import { ModuleRepositoryImpl } from "../../infrastructure/repository-implementation/module.repository.impl";
 
-export type IGetAllModulesUseCase = {
-  execute(): Promise<ModuleEntity[]>;
-};
+export class GetAllModulesUseCase {
+  private repository = new ModuleRepositoryImpl();
 
-export class GetAllModulesUseCase implements IGetAllModulesUseCase {
-  constructor(private readonly repository: BaseRepository<ModuleEntity>) {}
+  constructor() {}
 
   async execute(): Promise<ModuleEntity[]> {
     const modules = await this.repository.findMany();

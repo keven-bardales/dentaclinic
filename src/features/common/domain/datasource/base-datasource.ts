@@ -2,6 +2,7 @@ import { IRead } from "../repository-generics/iRead";
 import { IWrite } from "../repository-generics/iWrite.interface";
 
 export abstract class BaseDataSource<T> implements IRead<T>, IWrite<T> {
+  abstract tableName: string;
   abstract find(item: T): Promise<T[]>;
   abstract findOne(id: string): Promise<T | null>;
   abstract create(item: T): Promise<T>;

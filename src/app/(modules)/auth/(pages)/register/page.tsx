@@ -49,9 +49,11 @@ export default function RegisterPage() {
     setState({ ...state, loadingRegister: true });
     const response = await registerUser(values);
 
-    handleActionResponse(response);
+    const result = JSON.parse(response);
 
-    if (response.success) {
+    handleActionResponse(result);
+
+    if (result.success) {
       router.push("/auth/sign-in");
     }
 

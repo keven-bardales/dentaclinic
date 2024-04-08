@@ -11,15 +11,35 @@ export class DateWrapper {
     return new DateWrapper(new Date(timestamp));
   }
 
-  toString() {
+  get toString() {
     return this.date.toISOString();
   }
 
-  toTimestamp() {
+  get toTimestamp() {
     return this.date.getTime();
   }
 
-  toISOString() {
+  get toLocaleString() {
+    return this.date.toLocaleString();
+  }
+
+  get toLocaleDateString() {
+    return this.date.toLocaleDateString();
+  }
+
+  get toLocaleTimeString() {
+    return this.date.toLocaleTimeString();
+  }
+
+  get toDateString() {
+    return this.date.toDateString();
+  }
+
+  get toTimeString() {
+    return this.date.toTimeString();
+  }
+
+  get toISOString() {
     return this.date.toISOString();
   }
 }

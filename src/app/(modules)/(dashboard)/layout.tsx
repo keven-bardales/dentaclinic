@@ -1,7 +1,7 @@
-import Avatar from "./(components)/avatar";
-import ClosingSessionLoader from "./(components)/closing-session";
-import MainContentWrapper from "./(components)/main-content-wrapper";
-import SidebarButton from "./(components)/sidebar";
+import Avatar from "./components/avatar";
+import ClosingSessionLoader from "./components/closing-session";
+import MainContentWrapper from "./components/main-content-wrapper";
+import SidebarButton from "./components/sidebar";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
   return (

@@ -1,5 +1,5 @@
-import BasicPageWrapper from "../../(components)/basic-page-wrapper";
-import { getCachedModules } from "../settings/(pages)/modules/(cached)/get-cached-modules";
+import BasicPageWrapper from "../../components/basic-page-wrapper";
+import { getCachedModules } from "../settings/(pages)/modules/cached/get-cached-modules";
 
 export default async function AgendaPage() {
   const modules = await getCachedModules();
