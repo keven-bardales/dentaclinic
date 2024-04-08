@@ -70,9 +70,11 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
     setState({ ...state, isCreatingModule: true });
     const response = await newModule(payload);
 
-    handleActionResponse(response);
+    const deserializeResponse = JSON.parse(response);
 
-    if (response?.success) {
+    handleActionResponse(deserializeResponse);
+
+    if (deserializeResponse?.success) {
       setVisible(false);
     }
 

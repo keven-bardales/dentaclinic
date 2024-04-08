@@ -11,7 +11,6 @@ export default async function AgendaPage() {
       {modules.map((module) => (
         <div key={module.id}>
           <h2>{module.name}</h2>
-          <p>{module.description}</p>
         </div>
       ))}
     </BasicPageWrapper>

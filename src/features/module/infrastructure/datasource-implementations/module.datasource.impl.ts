@@ -1,6 +1,7 @@
 import { BaseDataSourceImpl } from "@/features/common/infrastructure/datasource-implementation/base-datasource-implementation";
 import { ModuleEntity } from "../../domain/entities/module.entity";
 import { db } from "@/lib/db/db";
+import { CreateModulePayload, CreateModulePayloadWithPermissions } from "../../domain/interfaces/create-module-payload.interface";
 
 export class ModuleDataSourceImpl extends BaseDataSourceImpl<ModuleEntity> {
   constructor() {
@@ -41,5 +42,39 @@ export class ModuleDataSourceImpl extends BaseDataSourceImpl<ModuleEntity> {
     });
 
     return created;
+  }
+
+  async getModuleByName(name: string): Promise<ModuleEntity | null> {
+    const result = await db.module.findFirst({
+      where: {
+        name,
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return ModuleEntity.create(result);
+  }
+
+  async createModuleWithDefaultPermissions(payload: CreateModulePayloadWithPermissions): Promise<ModuleEntity | null> {
+    const result = await db.module.create({
+      data: {
+        name: payload.name,
+        description: payload.description,
+        modulePermissions: {
+          createMany: {
+            data: payload.permissions,
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return ModuleEntity.create(result);
   }
 }

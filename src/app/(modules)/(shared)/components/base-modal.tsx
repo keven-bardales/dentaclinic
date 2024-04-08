@@ -55,7 +55,13 @@ export default function BaseModal<T, K>({
 
   return (
     <Dialog {...primeReactDialogProps} visible={visible} onHide={handleHide}>
-      <ModalComponent data={data ?? null} onClose={handleClose} />
+      <ModalComponent
+        primeReactDialogProps={primeReactDialogProps}
+        data={data ?? null}
+        onHide={handleClose}
+        visible={visible}
+        setVisible={setVisible}
+      />
     </Dialog>
   );
 }
