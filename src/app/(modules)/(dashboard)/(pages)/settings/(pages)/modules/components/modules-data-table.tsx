@@ -85,11 +85,6 @@ export default function ModulesDataTable({ initialmodules }: { initialmodules: s
       <DataTable
         dataKey="id"
         scrollable
-        pt={{
-          wrapper: {
-            className: "h-[calc(100vh-33vh)]",
-          },
-        }}
         onRowToggle={(e) => {
           setExpandedRows(e.data as any);
         }}

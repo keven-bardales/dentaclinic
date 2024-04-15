@@ -1,24 +1,16 @@
 "use client";
-import { Prisma } from "@prisma/client";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
 import { useState } from "react";
-import { getRoles } from "../queries/getRoles";
-import { CreateRolePermissionDialog } from "./create-role-permission-dialog";
 import NewRoleModal from "./new-role-modal";
+import { RoleWithUsersPermissionsCountDto } from "@/features/role/domain/dtos/roleWithUsersPermissionsCount.dto";
+import { useRouter } from "next/navigation";
 
-export default function RolesDataTable({
-  roles,
-  children,
-}: {
-  roles: Prisma.PromiseReturnType<typeof getRoles>;
-
-  children: React.ReactNode;
-}) {
+export default function RolesDataTable({ initialRoles }: { initialRoles: string }) {
+  const roles = JSON.parse(initialRoles) as RoleWithUsersPermissionsCountDto[];
   const [newRoleDialog, setnewRoleDialog] = useState(false);
-  const [createRolePermissionDialog, setcreateRolePermissionDialog] = useState(false);
-  const [expandedRows, setExpandedRows] = useState<Prisma.PromiseReturnType<typeof getRoles>[0][] | Prisma.PromiseReturnType<typeof getRoles>[0][]>();
+  const router = useRouter();
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">
@@ -33,74 +25,40 @@ export default function RolesDataTable({
     </div>
   );
 
-  const rowExpansionTemplate = (data: Prisma.PromiseReturnType<typeof getRoles>[0]) => {
-    const rowExpansionHeader = (
-      <>
-        <div className="flex justify-between items-center flex-wrap gap-2">
-          <span className="font-bold">Permisos de rol {data.name}</span>
-          <Button
-            icon="pi pi-plus"
-            onClick={(e) => {
-              setcreateRolePermissionDialog(true);
-            }}
-            label="Nuevo Permiso"
-          />
-        </div>
-        <CreateRolePermissionDialog
-          visible={createRolePermissionDialog}
-          data={{
-            id: data.id,
-            role: data,
-          }}
-          onHide={() => {}}
-          setVisible={setcreateRolePermissionDialog}
-          primeReactDialogProps={{
-            className: "p-0 w-full min-w-[300px] max-w-[600px]",
-          }}
-        />
-      </>
-    );
-
-    return (
-      <>
-        <DataTable header={rowExpansionHeader} value={data.rolePermissions ?? []} stripedRows paginator rows={5} rowsPerPageOptions={[5, 10, 25, 50]}>
-          <Column field="name" header="Nombre" />
-          <Column field="module" header="Modulo" />
-        </DataTable>
-      </>
-    );
-  };
-
-  const allowExpansion = (rowData: Prisma.PromiseReturnType<typeof getRoles>[0]) => {
-    return rowData.rolePermissions.length > 0;
-  };
-
   return (
     <>
       {" "}
-      <DataTable<Prisma.PromiseReturnType<typeof getRoles>>
+      <DataTable<RoleWithUsersPermissionsCountDto[]>
         dataKey="id"
         scrollable
-        scrollHeight="calc(100vh - 280px)"
-        onRowToggle={(e) => {
-          setExpandedRows(e.data as any);
-        }}
-        expandedRows={expandedRows}
-        rowExpansionTemplate={rowExpansionTemplate}
         stripedRows
         paginator
+        pt={{
+          bodyRow: {
+            className: "cursor-pointer hover:bg-primary",
+          },
+        }}
+        onRowClick={(e) => {
+          router.push(`/settings/roles/${e.data.id}`);
+        }}
         rows={5}
         rowsPerPageOptions={[5, 10, 25, 50]}
         header={header}
         value={roles ?? []}
       >
-        <Column className="w-[80px]" expander={allowExpansion} />
+        <Column className="w-[80px]" />
         <Column field="name" header="Nombre" />
         <Column field="description" header="Descripción" />
         <Column
           header="Permisos"
-          body={(data: Prisma.PromiseReturnType<typeof getRoles>[0]) => {
-            return <>{data?.rolePermissions?.length}</>;
+          body={(data: RoleWithUsersPermissionsCountDto) => {
+            return <>{data?.permissionsCount}</>;
+          }}
+        />
+        <Column
+          header="Usuarios"
+          body={(data: RoleWithUsersPermissionsCountDto) => {
+            return <>{data?.usersCount}</>;
           }}
         />
       </DataTable>
@@ -111,7 +69,6 @@ export default function RolesDataTable({
           setnewRoleDialog(false);
         }}
       ></NewRoleModal>
-      {children}
     </>
   );
 }

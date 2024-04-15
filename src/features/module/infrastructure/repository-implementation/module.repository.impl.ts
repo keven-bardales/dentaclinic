@@ -1,7 +1,7 @@
 import { BaseRepositoryImpl } from "@/features/common/infrastructure/repository-implementation/base-repository-implementation";
 import { ModuleEntity } from "../../domain/entities/module.entity";
 import { ModuleDataSourceImpl } from "../datasource-implementations/module.datasource.impl";
-import { CreateModulePayload, CreateModulePayloadWithPermissions } from "../../domain/interfaces/create-module-payload.interface";
+import { CreateModulePayloadWithPermissions } from "../../domain/interfaces/create-module-payload.interface";
 
 export class ModuleRepositoryImpl extends BaseRepositoryImpl<ModuleEntity> {
   constructor() {

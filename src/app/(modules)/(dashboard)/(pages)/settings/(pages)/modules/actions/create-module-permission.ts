@@ -5,6 +5,7 @@ import * as z from "zod";
 import { newModulePermissionSchema } from "../schemas/module-permission-schema";
 import { db } from "@/lib/db/db";
 import { revalidateTag } from "next/cache";
+import { MODULESCACHEKEYS } from "../cache-keys/modules-cache-keys";
 
 export const createModulePermission = async (payload: z.infer<typeof newModulePermissionSchema>) => {
   const validatedFields = newModulePermissionSchema.safeParse(payload);
@@ -35,7 +36,7 @@ export const createModulePermission = async (payload: z.infer<typeof newModulePe
     },
   });
 
-  revalidateTag("modules");
+  revalidateTag(MODULESCACHEKEYS.MODULES.key);
 
   return {
     message: "Permiso creado exitosamente",

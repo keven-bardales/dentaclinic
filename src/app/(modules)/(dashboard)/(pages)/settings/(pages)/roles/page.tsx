@@ -1,16 +1,13 @@
 import BasicPageWrapper from "@/app/(modules)/(dashboard)/components/basic-page-wrapper";
 import RolesDataTable from "./components/roles-data-table";
-import { getCachedRoles } from "./cached/getCachedRoles";
-import CreateRolePermissionWrapper from "./components/create-role-permissions-wrapper";
+import { getCachedRolesWithPermissionsAndUsersCount } from "./cached/getCachedRoles";
 
 export default async function RolesPage() {
-  const roles = await getCachedRoles();
+  const roles = await getCachedRolesWithPermissionsAndUsersCount();
 
   return (
-    <BasicPageWrapper>
-      <RolesDataTable roles={roles}>
-        <CreateRolePermissionWrapper />
-      </RolesDataTable>
+    <BasicPageWrapper className="px-0">
+      <RolesDataTable initialRoles={JSON.stringify(roles?.data)}></RolesDataTable>
     </BasicPageWrapper>
   );
 }

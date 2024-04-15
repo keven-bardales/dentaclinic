@@ -52,7 +52,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
             },
             datatable: {
               wrapper: {
-                className: "scrollbar-thin",
+                className: "scrollbar-thin h-[calc(100vh-33vh)]",
               },
               bodyRow: {
                 className: "!p-0",

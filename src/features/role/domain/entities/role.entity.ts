@@ -1,8 +1,9 @@
+import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { RolePermissionEntity } from "@/features/rolePermission/domain/entities/rolePermission.entity";
 import { UserRoleEntity } from "@/features/userRoles/domain/entities/userRole.entity";
 
-export class RoleEntity {
+export class RoleEntity extends BaseEntity {
   constructor(
     public id: number,
     public name: string,
@@ -12,11 +13,9 @@ export class RoleEntity {
     public rolePermissions: RolePermissionEntity[],
     public userRoles: UserRoleEntity[]
   ) {
-    this.id = id;
+    super(id, createdAt, updatedAt, "roles");
     this.name = name;
     this.description = description;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.rolePermissions = rolePermissions;
     this.userRoles = userRoles;
   }

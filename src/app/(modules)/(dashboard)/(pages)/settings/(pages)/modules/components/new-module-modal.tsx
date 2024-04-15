@@ -82,7 +82,7 @@ export default function NewModuleModal({ onHide, visible, setVisible }: NewModul
   };
 
   return (
-    <Dialog footer={modalFooter} header="Nuevo Modulo" className="p-0 w-full min-w-[300px] max-w-[600px]" visible={visible} onHide={onHide}>
+    <Dialog footer={modalFooter} header="Nuevo Modulo" className="p-0 w-[90%] min-w-[300px] max-w-[600px]" visible={visible} onHide={onHide}>
       <form onSubmit={handleSubmit(createNewModule)} className="flex w-full flex-col gap-y-8">
         <Controller
           name="name"

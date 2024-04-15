@@ -1,8 +1,11 @@
+import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { ModuleEntity } from "@/features/module/domain/entities/module.entity";
 import { RolePermissionEntity } from "@/features/rolePermission/domain/entities/rolePermission.entity";
 
-export class ModulePermissionEntity {
+export class ModulePermissionEntity extends BaseEntity {
+  static tableName = "modulePermission";
+
   constructor(
     public id: number,
     public name: string,
@@ -12,11 +15,9 @@ export class ModulePermissionEntity {
     public module?: ModuleEntity | null,
     public rolePermissions?: RolePermissionEntity[]
   ) {
-    this.id = id;
+    super(id, createdAt, updatedAt, ModulePermissionEntity.tableName);
     this.name = name;
     this.moduleId = moduleId;
-    this.createdAt = createdAt;
-    this.updatedAt = updatedAt;
     this.module = module;
     this.rolePermissions = rolePermissions;
   }

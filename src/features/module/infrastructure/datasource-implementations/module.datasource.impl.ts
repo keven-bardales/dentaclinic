@@ -1,7 +1,7 @@
 import { BaseDataSourceImpl } from "@/features/common/infrastructure/datasource-implementation/base-datasource-implementation";
 import { ModuleEntity } from "../../domain/entities/module.entity";
 import { db } from "@/lib/db/db";
-import { CreateModulePayload, CreateModulePayloadWithPermissions } from "../../domain/interfaces/create-module-payload.interface";
+import { CreateModulePayloadWithPermissions } from "../../domain/interfaces/create-module-payload.interface";
 
 export class ModuleDataSourceImpl extends BaseDataSourceImpl<ModuleEntity> {
   constructor() {
