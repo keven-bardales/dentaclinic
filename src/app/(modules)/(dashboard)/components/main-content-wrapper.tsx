@@ -8,7 +8,7 @@ export default function MainContentWrapper({ children }: { children: React.React
 
   return (
     <section
-      className={cn("w-full flex flex-col md:ml-[18rem] transition-all duration-300", {
+      className={cn("w-full flex flex-col md:ml-[18rem] transition-all duration-300 overflow-hidden", {
         "md:ml-0": sidebarMode == SidebarModes.HIDDEN,
       })}
     >

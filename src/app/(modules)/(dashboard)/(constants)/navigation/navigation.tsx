@@ -1,11 +1,16 @@
+import { NextRequest } from "next/server";
+
+export type MiddleWareFunction = (request: NextRequest) => Promise<void>;
+
 export type NavigationItem = {
   title: string;
   href: string;
   icon: JSX.Element;
   permissions: string[];
-  middleWares: string[];
+  middleWares: MiddleWareFunction[];
   isProtected: boolean;
   children: NavigationItem[];
+  renders?: boolean;
 };
 
 export const DashboardNavigation: NavigationItem[] = [
@@ -80,7 +85,18 @@ export const DashboardNavigation: NavigationItem[] = [
         permissions: [],
         middleWares: [],
         isProtected: true,
-        children: [],
+        children: [
+          {
+            title: "Detalle de rol",
+            href: "/settings/roles/[id]",
+            icon: <i className="pi pi-users"></i>,
+            permissions: [],
+            middleWares: [],
+            isProtected: true,
+            renders: false,
+            children: [],
+          },
+        ],
       },
       {
         title: "Modulos",

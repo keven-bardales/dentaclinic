@@ -31,7 +31,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className={cn(inter.className, "bg-surface")}>
+      <body className={cn(inter.className, "bg-surface overflow-hidden")}>
         <MainProviders>{children}</MainProviders>
       </body>
     </html>

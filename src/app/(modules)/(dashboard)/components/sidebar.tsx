@@ -28,16 +28,18 @@ const Module = ({ item, index }: { item: (typeof DashboardNavigation)[0]; index:
         </div>
       </StyleClass>
       <ul className="list-none p-0 m-0 overflow-hidden">
-        {item.children.map((child, index) => (
-          <li className="mb-1" key={`${child.href}-${index}`}>
-            <RenderIf condition={child.children.length == 0}>
-              <ModuleItem child={child} index={index} />
-            </RenderIf>
-            <RenderIf condition={child.children.length > 0}>
-              <ModuleItemWithChildren child={child} index={index} />
-            </RenderIf>
-          </li>
-        ))}
+        {item.children
+          .filter((item) => item?.renders != false)
+          .map((child, index) => (
+            <li className="mb-1" key={`${child.href}-${index}`}>
+              <RenderIf condition={child.children.filter((child) => child?.renders != false).length == 0}>
+                <ModuleItem child={child} index={index} />
+              </RenderIf>
+              <RenderIf condition={child.children.filter((child) => child?.renders != false).length > 0}>
+                <ModuleItemWithChildren child={child} index={index} />
+              </RenderIf>
+            </li>
+          ))}
       </ul>
     </li>
   );

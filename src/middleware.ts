@@ -5,8 +5,14 @@ import NextAuth from "next-auth";
 
 const { auth } = NextAuth(authConfig);
 
-export default auth((request) => {
-  const { pathname } = request.nextUrl;
+function matchesPattern(routeHref: string, pathname: string) {
+  const regexPattern = new RegExp("^" + routeHref.replace(/\[id\]/g, "\\d+").replace(/:\w+/g, "\\w+") + "$");
+  return regexPattern.test(pathname);
+}
+
+export default auth(async (request) => {
+  const { pathname, href, searchParams, search, basePath } = request.nextUrl;
+
   const isLoggedIn = !!request.auth;
 
   const isApiAuthRoute = pathname.startsWith(nextAuthPrefix);
@@ -17,11 +23,15 @@ export default auth((request) => {
     return NextResponse.next();
   }
 
-  const mainRoutes = flattenedRoutes;
+  const requestedRoute = flattenedRoutes.find((route) => matchesPattern(route.href, pathname));
 
-  const protectedRoutes = mainRoutes.filter((route) => route.isProtected);
+  if (requestedRoute) {
+    for (const middleware of requestedRoute.middleWares) {
+      await middleware(request);
+    }
+  }
 
-  if (protectedRoutes.some((route) => route?.href.includes(pathname)) && !isLoggedIn) {
+  if (requestedRoute?.isProtected && !isLoggedIn) {
     return NextResponse.redirect(loginUrl);
   }
 

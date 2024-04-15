@@ -5,6 +5,7 @@ import RoleDetailHeader from "./components/role-detail-header";
 import { Suspense } from "react";
 import { ListBox } from "primereact/listbox";
 import RolePerssionsListbox from "./components/role-perssions-listbox";
+import RoleUsersListbox from "./components/role-users-listbox";
 
 export default async function RoleDetailPage({
   params,
@@ -20,23 +21,24 @@ export default async function RoleDetailPage({
   const rolePromise = getCachedRoleDetail(Number(params.id));
 
   return (
-    <BasicPageWrapper className="px-0">
-      <Suspense fallback={<div>Loading...</div>}>
-        <RoleDetailHeader rolePromise={rolePromise} />
-      </Suspense>
-
+    <BasicPageWrapper className="py-5">
       {await Promise.all([permissionsGrouped, rolePromise]).then(([permissionsGrouped, role]) => {
         return (
-          <div className="flex flex-col gap-y-5">
-            <div className="flex flex-col gap-y-1">
-              <h2 className="text-3xl font-bold sticky top-0 z-50 bg-surface px-3">Permisos</h2>
-              <p className="px-3">
-                {role.data?.permissionsIds.length} permisos asignados de{" "}
-                {permissionsGrouped.data?.reduce((acc, module) => acc + module.permissions.length, 0)} disponibles
-              </p>
+          <>
+            <div className="flex w-full py-5">
+              <h1 className="text-4xl font-bold">{role?.data?.name}</h1>
             </div>
-            <RolePerssionsListbox roleString={JSON.stringify(role.data)} permissionsGroupedString={JSON.stringify(permissionsGrouped.data)} />
-          </div>
+
+            <div className="flex flex-wrap lg:flex-nowrap gap-y-5 gap-x-6 pb-5">
+              <RoleUsersListbox className="w-full grow min-h-[calc(100vh-200px)]" roleString={JSON.stringify(role.data)} />
+
+              <RolePerssionsListbox
+                className="ml-auto w-full grow min-h-[calc(100vh-200px)]"
+                roleString={JSON.stringify(role.data)}
+                permissionsGroupedString={JSON.stringify(permissionsGrouped.data)}
+              />
+            </div>
+          </>
         );
       })}
     </BasicPageWrapper>
