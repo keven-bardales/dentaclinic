@@ -6,7 +6,7 @@ export default async function RolesPage() {
   const roles = await getCachedRolesWithPermissionsAndUsersCount();
 
   return (
-    <BasicPageWrapper className="px-0">
+    <BasicPageWrapper>
       <RolesDataTable initialRoles={JSON.stringify(roles?.data)}></RolesDataTable>
     </BasicPageWrapper>
   );

@@ -8,17 +8,17 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     <main className="w-full h-screen overflow-hidden flex max-h-screen">
       <ClosingSessionLoader />
       <MainContentWrapper>
-        <header className="w-full p-3 px-5 max-h-[80px] border-b flex justify-between items-center">
-          <SidebarButton />
-          <Avatar />
-        </header>
-        <div className="overflow-auto scrollbar-thin flex flex-col grow h-full w-full">
+        <div className="overflow-auto scrollbar-thin flex flex-col items-center mx-auto max-w-[1920px] h-full w-full">
+          <header className="w-full p-4 pt-7 max-h-[50px] flex justify-between max-w-[1920px] mx-auto items-center">
+            <SidebarButton />
+            <Avatar />
+          </header>
           {children}
 
-          <footer className="p-3 px-5 max-h-[80px] md:hidden">Footer</footer>
+          {/* <footer className="p-3 px-5 max-h-[80px] md:hidden">Footer</footer> */}
         </div>
 
-        <footer className="p-3 px-5 max-h-[80px] hidden md:block border-t">Footer</footer>
+        {/* <footer className="p-3 px-5 max-h-[80px] hidden md:block border-t">Footer</footer> */}
       </MainContentWrapper>
     </main>
   );

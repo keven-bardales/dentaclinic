@@ -15,4 +15,8 @@ export class UserRepositoryImpl extends BaseRepositoryImpl<UserEntity> {
   getUserByEmail(email: string): Promise<UserEntity | null> {
     return (this.dataSource as UserDataSourceImpl).getUserByEmail(email);
   }
+
+  getUsersList(): Promise<UserEntity[]> {
+    return (this.dataSource as UserDataSourceImpl).getUsersList();
+  }
 }

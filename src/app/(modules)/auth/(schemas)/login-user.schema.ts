@@ -14,7 +14,7 @@ export const loginUserSchema = z.object({
       invalid_type_error: "La contraseña es inválida",
       required_error: "La contraseña es requerida",
     })
-    .min(8, {
+    .min(5, {
       message: "La contraseña debe tener al menos 8 caracteres",
     }),
 });

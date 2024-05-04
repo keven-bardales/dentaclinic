@@ -12,7 +12,6 @@ export default function ThemeSwitcher() {
       <Button
         onClick={() => {
           if (!changeTheme) return;
-          changeTheme("primereact/resources/themes/lara-light-blue/theme.css", "primereact/resources/themes/lara-light-blue/theme.css", "theme-link");
         }}
       >
         Toggle

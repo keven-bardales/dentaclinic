@@ -1,62 +1,59 @@
-import bcrypt from "bcryptjs";
-import { faker } from "@faker-js/faker";
-import { PrismaClient } from "@prisma/client";
+import { ro } from "@faker-js/faker";
+
+const { faker } = require("@faker-js/faker");
+const { PrismaClient } = require("@prisma/client");
+const { bcryptAdapter } = require("./../src/features/common/adapters/bcryptjs.adapter");
 const db = new PrismaClient();
 
 const main = async () => {
   try {
+    await db.userRoles.deleteMany();
+    await db.user.deleteMany();
+    await db.rolePermissions.deleteMany();
+    await db.role.deleteMany();
+    await db.modulePermission.deleteMany();
+    await db.module.deleteMany();
+
     await db.module.createMany({
       data: [
         {
-          id: 1,
           name: "Pacientes",
           description: "Patients module",
         },
         {
-          id: 2,
-          name: "Agenda",
-          description: "Agenda module",
+          name: "Citas",
+          description: "Appointments module",
         },
       ],
       skipDuplicates: true,
     });
 
-    await db.modulePermission.createMany({
-      data: [
-        {
-          moduleId: 1,
-          name: "Crear pacientes",
-        },
-        {
-          moduleId: 1,
-          name: "Editar pacientes",
-        },
-        {
-          moduleId: 1,
-          name: "Eliminar pacientes",
-        },
-        {
-          moduleId: 1,
-          name: "Ver pacientes",
-        },
-        {
-          moduleId: 2,
-          name: "Crear citas",
-        },
-        {
-          moduleId: 2,
-          name: "Editar citas",
-        },
-        {
-          moduleId: 2,
-          name: "Eliminar citas",
-        },
-        {
-          moduleId: 2,
-          name: "Ver citas",
-        },
-      ],
+    const createdModules = await db.module.findMany();
+
+    createdModules.forEach(async (module: any) => {
+      await db.modulePermission.createMany({
+        data: [
+          {
+            moduleId: module.id,
+            name: "Crear",
+          },
+          {
+            moduleId: module.id,
+            name: "Editar",
+          },
+          {
+            moduleId: module.id,
+            name: "Eliminar",
+          },
+          {
+            moduleId: module.id,
+            name: "Ver",
+          },
+        ],
+      });
     });
+
+    const modulePermissions = await db.modulePermission.findMany();
 
     await db.role.createMany({
       data: [
@@ -65,47 +62,23 @@ const main = async () => {
           description: "Administrator",
         },
         {
-          name: "User",
+          name: "SuperAdmin",
           description: "User",
         },
       ],
     });
 
-    await db.rolePermissions.createMany({
-      data: [
-        {
-          rolId: 1,
-          modulePermissionId: 1,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 2,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 3,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 4,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 5,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 6,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 7,
-        },
-        {
-          rolId: 1,
-          modulePermissionId: 8,
-        },
-      ],
+    const roles = await db.role.findMany();
+
+    modulePermissions.forEach(async (modulePermission: any) => {
+      roles.forEach(async (role: any) => {
+        await db.rolePermissions.create({
+          data: {
+            rolId: role.id,
+            modulePermissionId: modulePermission.id,
+          },
+        });
+      });
     });
 
     await db.user.createMany({
@@ -115,33 +88,40 @@ const main = async () => {
           emailVerified: new Date(),
           image: faker.image.avatar(),
           name: faker.person.firstName("male"),
-          password: bcrypt.hashSync("admin", 10),
+          password: await bcryptAdapter.hash("123456"),
         },
         {
           email: faker.internet.email(),
           emailVerified: new Date(),
           image: faker.image.avatar(),
           name: faker.person.firstName(),
-          password: bcrypt.hashSync("user", 10),
+          password: await bcryptAdapter.hash("123456"),
+        },
+        {
+          email: "keven.bardales@gmail.com",
+          name: "Keven Bardales",
+          password: await bcryptAdapter.hash("123456"),
         },
       ],
     });
 
     const users = await db.user.findMany();
 
-    await db.userRoles.createMany({
-      data: [
-        {
-          userId: users[0].id,
-          roleId: 1,
-        },
-        {
-          userId: users[1].id,
-          roleId: 2,
-        },
-      ],
+    roles.forEach(async (role: any) => {
+      users.forEach(async (user: any) => {
+        await db.userRoles.create({
+          data: {
+            userId: user.id,
+            roleId: role.id,
+          },
+        });
+      });
     });
-  } catch (error) {}
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-main().catch(console.error);
+module.exports = main;
+
+main().catch((e) => {});

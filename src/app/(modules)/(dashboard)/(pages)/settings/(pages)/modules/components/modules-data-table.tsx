@@ -1,5 +1,4 @@
 "use client";
-import { Prisma } from "@prisma/client";
 import { DataTable } from "primereact/datatable";
 import { Column } from "primereact/column";
 import { Button } from "primereact/button";
@@ -17,7 +16,7 @@ export default function ModulesDataTable({ initialmodules }: { initialmodules: s
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <span className="font-bold text-xl">Modulos</span>
+      <span className="font-bold text-4xl">Lista de modulos</span>
       <Button
         icon="pi pi-plus"
         onClick={(e) => {
@@ -58,14 +57,7 @@ export default function ModulesDataTable({ initialmodules }: { initialmodules: s
 
     return (
       <>
-        <DataTable
-          header={rowExpansionHeader}
-          value={data.modulePermissions ?? []}
-          stripedRows
-          paginator
-          rows={10}
-          rowsPerPageOptions={[5, 10, 25, 50]}
-        >
+        <DataTable header={rowExpansionHeader} value={data.modulePermissions ?? []} paginator rows={10} rowsPerPageOptions={[5, 10, 25, 50]}>
           <Column field="id" header="Id" />
           <Column field="name" header="Nombre" />
         </DataTable>
@@ -90,7 +82,6 @@ export default function ModulesDataTable({ initialmodules }: { initialmodules: s
         }}
         expandedRows={expandedRows}
         rowExpansionTemplate={rowExpansionTemplate}
-        stripedRows
         paginator
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}

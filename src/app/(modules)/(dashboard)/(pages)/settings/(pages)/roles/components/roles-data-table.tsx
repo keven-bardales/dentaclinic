@@ -8,13 +8,13 @@ import { RoleWithUsersPermissionsCountDto } from "@/features/role/domain/dtos/ro
 import { useRouter } from "next/navigation";
 
 export default function RolesDataTable({ initialRoles }: { initialRoles: string }) {
-  const roles = JSON.parse(initialRoles) as RoleWithUsersPermissionsCountDto[];
+  const roles = JSON.parse(initialRoles ?? "[]") as RoleWithUsersPermissionsCountDto[];
   const [newRoleDialog, setnewRoleDialog] = useState(false);
   const router = useRouter();
 
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">
-      <span className="font-bold text-xl">Roles</span>
+      <span className="font-bold text-4xl">Lista de roles</span>
       <Button
         icon="pi pi-plus"
         onClick={(e) => {
@@ -31,17 +31,11 @@ export default function RolesDataTable({ initialRoles }: { initialRoles: string 
       <DataTable<RoleWithUsersPermissionsCountDto[]>
         dataKey="id"
         scrollable
-        stripedRows
         paginator
-        pt={{
-          bodyRow: {
-            className: "cursor-pointer hover:bg-primary",
-          },
-        }}
         onRowClick={(e) => {
           router.push(`/settings/roles/${e.data.id}`);
         }}
-        rows={5}
+        rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}
         header={header}
         value={roles ?? []}

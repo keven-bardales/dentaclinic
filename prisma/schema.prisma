@@ -53,7 +53,7 @@ model Role {
 }
 
 model UserRoles {
-  id        String   @id @default(cuid())
+  id        Int      @id @default(autoincrement())
   userId    String
   roleId    Int
   createdAt DateTime @default(now())

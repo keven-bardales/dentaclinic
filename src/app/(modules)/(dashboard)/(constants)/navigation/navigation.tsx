@@ -1,13 +1,11 @@
-import { NextRequest, NextResponse } from "next/server";
-
-export type MiddleWareFunction = (request: NextRequest) => Promise<void>;
+import { RouteMiddleware, withPermissions } from "@/lib/middlewares/withPermissionsMiddleWare";
 
 export type NavigationItem = {
   title: string;
   href: string;
   icon: JSX.Element;
   permissions: string[];
-  middleWares: MiddleWareFunction[];
+  middleWares: RouteMiddleware[];
   isProtected: boolean;
   children: NavigationItem[];
   renders?: boolean;
@@ -27,7 +25,7 @@ export const DashboardNavigation: NavigationItem[] = [
         href: "/agenda",
         icon: <i className="pi pi-calendar"></i>,
         permissions: [],
-        middleWares: [],
+        middleWares: [withPermissions(["admin"])],
         isProtected: true,
         children: [],
       },
@@ -36,7 +34,7 @@ export const DashboardNavigation: NavigationItem[] = [
         href: "/patients",
         icon: <i className="pi pi-users"></i>,
         permissions: [],
-        middleWares: [],
+        middleWares: [withPermissions(["patients"])],
         isProtected: true,
         children: [],
       },
@@ -91,7 +89,7 @@ export const DashboardNavigation: NavigationItem[] = [
             href: "/settings/roles/[id]",
             icon: <i className="pi pi-users"></i>,
             permissions: [],
-            middleWares: [],
+            middleWares: [withPermissions(["CanViewroleDetail"], false)],
             isProtected: true,
             renders: false,
             children: [],

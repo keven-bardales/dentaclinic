@@ -6,7 +6,7 @@ export default async function ModulesPage() {
   const modules = await getCachedModules();
 
   return (
-    <BasicPageWrapper className="px-0">
+    <BasicPageWrapper>
       <ModulesDataTable initialmodules={JSON.stringify(modules) as any} />
     </BasicPageWrapper>
   );

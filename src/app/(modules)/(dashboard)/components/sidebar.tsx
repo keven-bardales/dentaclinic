@@ -11,6 +11,7 @@ import RenderIf from "@/lib/utils/render-if";
 import { DashboardNavigation } from "../(constants)/navigation/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { routeMatchesPattern, routeMatchesPatternActiveLink } from "@/lib/utils/route-match-pattern";
 
 const Module = ({ item, index }: { item: (typeof DashboardNavigation)[0]; index: number }) => {
   const moduleRef = useRef(null);
@@ -47,14 +48,21 @@ const Module = ({ item, index }: { item: (typeof DashboardNavigation)[0]; index:
 
 const ModuleItem = ({ child, index }: { child: (typeof DashboardNavigation)[0]["children"][0]; index: number }) => {
   const sidebarMode = useDashboardStore((state) => state.sidebarMode);
+  const isMobile = useDashboardStore((state) => state.isMobile);
+  const setSidebarMode = useDashboardStore((state) => state.setSidebarMode);
   const pathName = usePathname();
   return (
     <Link
+      onClick={() => {
+        if (isMobile) {
+          setSidebarMode(SidebarModes.HIDDEN);
+        }
+      }}
       href={child.href}
       className={cn(
         "p-ripple flex items-center cursor-pointer p-3 rounded-md hover:bg-primary hover:text-surface duration-300 transition-colors w-full",
         {
-          "bg-primary text-surface": pathName == child.href,
+          "bg-primary text-surface": routeMatchesPatternActiveLink(child.href, pathName),
         }
       )}
     >
@@ -69,6 +77,8 @@ const ModuleItem = ({ child, index }: { child: (typeof DashboardNavigation)[0]["
 
 const ModuleItemWithChildren = ({ child, index }: { child: (typeof DashboardNavigation)[0]["children"][2]; index: number }) => {
   const sidebarMode = useDashboardStore((state) => state.sidebarMode);
+  const isMobile = useDashboardStore((state) => state.isMobile);
+  const setSidebarMode = useDashboardStore((state) => state.setSidebarMode);
   const buttonRef = useRef(null);
   const pathname = usePathname();
 
@@ -93,11 +103,16 @@ const ModuleItemWithChildren = ({ child, index }: { child: (typeof DashboardNavi
         {child.children.map((child2, index) => (
           <li key={`${child2.href}-${index}`}>
             <Link
+              onClick={() => {
+                if (isMobile) {
+                  setSidebarMode(SidebarModes.HIDDEN);
+                }
+              }}
               href={child2.href}
               className={cn(
                 "p-ripple flex items-center cursor-pointer p-3 rounded-md hover:bg-primary hover:text-surface duration-150 transition-colors w-full",
                 {
-                  "bg-primary text-surface": pathname == child2.href,
+                  "bg-primary text-surface": routeMatchesPatternActiveLink(child2.href, pathname),
                 }
               )}
             >

@@ -33,4 +33,18 @@ export class UserDataSourceImpl extends BaseDataSourceImpl<UserEntity> {
 
     return UserEntity.create(result);
   }
+
+  async getUsersList(): Promise<UserEntity[]> {
+    const result = await db.user.findMany({
+      include: {
+        userRoles: {
+          include: {
+            role: true,
+          },
+        },
+      },
+    });
+
+    return result.map((user) => UserEntity.create(user));
+  }
 }

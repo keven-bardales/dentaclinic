@@ -4,8 +4,6 @@ import { cn } from "@/lib/utils/cn";
 import { useRouter } from "next/navigation";
 
 export default function BasicPageWrapper({ children, className }: { children: React.ReactNode; className?: string }) {
-  const router = useRouter();
-
   // useEffect(() => {
   //   const interval = setInterval(() => {
   //     router.refresh();
@@ -18,8 +16,8 @@ export default function BasicPageWrapper({ children, className }: { children: Re
 
   return (
     <section
-      className={cn("grow w-full px-5 flex-col", {
-        className: className,
+      className={cn("w-full h-full p-4 flex-col flex", {
+        [className as string]: !!className,
       })}
     >
       {children}

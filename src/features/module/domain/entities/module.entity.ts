@@ -24,8 +24,8 @@ export class ModuleEntity extends BaseEntity {
       obj.id,
       obj.name,
       obj.description,
-      DateWrapper.fromString(obj.createdAt),
-      DateWrapper.fromString(obj.updatedAt),
+      new DateWrapper(obj.createdAt),
+      new DateWrapper(obj.updatedAt),
       obj.modulePermissions ? obj.modulePermissions.map((modulePermission: any) => ModulePermissionEntity.create(modulePermission)) : []
     );
   }

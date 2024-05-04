@@ -35,15 +35,26 @@ export default function MainProviders({ children }: { children: ReactNode }) {
     <SessionProvider session={null}>
       <PrimeReactProvider
         value={{
+          ptOptions: {},
           ripple: true,
           locale: "es",
           pt: {
+            dialog: {
+              root: {
+                style: {
+                  width: "90%",
+                },
+              },
+            },
             overlaypanel: {
               content: {
                 className: "!p-0",
               },
             },
             paginator: {
+              current: {
+                className: "mt-auto",
+              },
               RPPDropdown: {
                 wrapper: {
                   className: "scrollbar-thin",
@@ -51,11 +62,27 @@ export default function MainProviders({ children }: { children: ReactNode }) {
               },
             },
             datatable: {
+              root: {
+                className: "!min-h-full lg:max-h-full rounded-lg flex flex-col gap-y-4 p-datatable-striped",
+              },
+              paginator: {
+                root: {
+                  className: "mt-auto",
+                },
+              },
+              column: {
+                headerCell: {
+                  className: "font-extrabold bg-[#1C2532] text-white",
+                },
+              },
               wrapper: {
-                className: "scrollbar-thin h-[calc(100vh-33vh)]",
+                className: "scrollbar-thin rounded-lg",
               },
               bodyRow: {
-                className: "!p-0",
+                className: "!p-0 cursor-pointer hover:bg-highlight",
+              },
+              header: {
+                className: "!mb-0 rounded-lg !p-4",
               },
             },
           },

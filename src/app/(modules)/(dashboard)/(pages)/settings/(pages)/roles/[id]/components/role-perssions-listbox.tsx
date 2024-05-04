@@ -9,6 +9,7 @@ import { ListBox } from "primereact/listbox";
 import { removeOrAddRolePermissionsAction } from "../actions/remove-add-role-permissions.action";
 import { Dropdown } from "primereact/dropdown";
 import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
+import { useState } from "react";
 
 export default function RolePerssionsListbox({
   roleString,
@@ -27,6 +28,9 @@ export default function RolePerssionsListbox({
   const role = JSON.parse(roleString) as RoleWithUsersAndPermissionsIdsDto;
   const permissionsGroupedOriginal = JSON.parse(permissionsGroupedString) as PermissionsGroupedByModuleDto[];
   const { handleActionResponse } = useToast();
+  const [state, setState] = useState({
+    updatingPermissionsIds: [] as number[],
+  });
 
   const filterOptions = [
     {
@@ -45,33 +49,33 @@ export default function RolePerssionsListbox({
 
   const selectedFilter = filterOptions.find((option) => option.value === urlFilter);
 
-  const filteredPermissions = permissionsGroupedOriginal.filter((moduleValue) => {
-    const moduleName = moduleValue.moduleName.toLowerCase();
-    const moduleNameMatch = moduleName.includes(search);
-    const somePermissionMatch = moduleValue.permissions.some((permission) => permission.name.toLowerCase().includes(search));
+  const filteredPermissions = permissionsGroupedOriginal
+    .filter((moduleWithPermissions) => {
+      const somePermissionNameMatches = moduleWithPermissions.permissions.some((permission) => permission.name.toLowerCase().includes(search));
 
-    if (!search && urlFilter !== "active" && urlFilter !== "inactive") {
-      return true;
-    }
+      const moduleNameMatches = moduleWithPermissions.moduleName.toLowerCase().includes(search);
 
-    if (!moduleNameMatch && search && !somePermissionMatch) {
-      return false;
-    }
-
-    if (search) {
-      moduleValue.permissions = moduleValue.permissions.filter((permission) => permission.name.toLowerCase().includes(search));
-    }
-
-    if (urlFilter === "active") {
-      moduleValue.permissions = moduleValue.permissions.filter((permission) => role.permissionsIds.includes(permission.id));
-    }
-
-    if (urlFilter === "inactive") {
-      moduleValue.permissions = moduleValue.permissions.filter((permission) => !role.permissionsIds.includes(permission.id));
-    }
-
-    return moduleValue.permissions.length > 0;
-  });
+      if (search) {
+        return somePermissionNameMatches || moduleNameMatches;
+      } else {
+        return true;
+      }
+    })
+    .map((moduleWithPermissions) => {
+      return {
+        ...moduleWithPermissions,
+        permissions: moduleWithPermissions.permissions.filter((permission) => {
+          if (selectedFilter?.value === "all") {
+            return true;
+          } else if (selectedFilter?.value === "active") {
+            return role.permissionsIds.includes(permission.id);
+          } else {
+            return !role.permissionsIds.includes(permission.id);
+          }
+        }),
+      };
+    })
+    .filter((moduleWithPermissions) => moduleWithPermissions.permissions.length > 0);
 
   const filterTemplate = (
     <div className="flex flex-col gap-y-3">
@@ -129,10 +133,16 @@ export default function RolePerssionsListbox({
       <div className="flex items-center justify-between">
         <span>{item.name}</span>
         <InputSwitch
+          disabled={state.updatingPermissionsIds.includes(item.id)}
           onChange={async (e) => {
+            if (state.updatingPermissionsIds.includes(item.id)) return;
+            setState({ ...state, updatingPermissionsIds: [...state.updatingPermissionsIds, item.id] });
             const response = await removeOrAddRolePermissionsAction(role.id, [item.id], e.value ? "add" : "remove");
             const deserialized = JSON.parse(response);
             handleActionResponse(deserialized);
+            setTimeout(() => {
+              setState({ ...state, updatingPermissionsIds: state.updatingPermissionsIds.filter((id) => id !== item.id) });
+            }, 500);
           }}
           checked={role.permissionsIds.some((permission) => permission == item.id)}
         />
@@ -147,10 +157,10 @@ export default function RolePerssionsListbox({
       filterTemplate={filterTemplate}
       filter
       className={className}
-      listStyle={{ maxHeight: "calc(100vh - 230px)" }}
+      listStyle={{ maxHeight: "calc(100vh - 300px)" }}
       pt={{
         wrapper: {
-          className: "scrollbar-thin",
+          className: "scrollbar-thin ",
         },
         emptyMessage: {
           className: "p-5 text-center font-bold text-lg",
