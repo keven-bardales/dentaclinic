@@ -14,7 +14,6 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
     // response.cookies.set("vercel", "fast");
 
     // Perform whatever logic the first middleware needs to do
-    request.cookies.set("middleware1", "true");
 
     // Call the next middleware and pass the request and response
 
