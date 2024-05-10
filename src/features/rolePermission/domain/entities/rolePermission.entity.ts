@@ -32,4 +32,16 @@ export class RolePermissionEntity {
       obj.modulePermission ? ModulePermissionEntity.create(obj.modulePermission) : null
     );
   }
+
+  toObject() {
+    return {
+      id: this.id,
+      rolId: this.rolId,
+      modulePermissionId: this.modulePermissionId,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      role: this.role ? this.role.toObject() : null,
+      modulePermission: this.modulePermission ? this.modulePermission.toObject() : null,
+    };
+  }
 }

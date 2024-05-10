@@ -44,4 +44,10 @@ export class RoleRepositoryImpl extends BaseRepositoryImpl<RoleEntity> {
 
     return result;
   }
+
+  async checkRoleIds(roleIds: number[]): Promise<RoleEntity[] | null> {
+    const result = await (this.dataSource as RoleDataSourceImpl).checkRoleIds(roleIds);
+
+    return result;
+  }
 }

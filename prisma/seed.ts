@@ -17,6 +17,10 @@ const main = async () => {
     await db.module.createMany({
       data: [
         {
+          name: "Dashboard",
+          description: "Dashboard module",
+        },
+        {
           name: "Pacientes",
           description: "Patients module",
         },
@@ -31,26 +35,38 @@ const main = async () => {
     const createdModules = await db.module.findMany();
 
     createdModules.forEach(async (module: any) => {
-      await db.modulePermission.createMany({
-        data: [
-          {
-            moduleId: module.id,
-            name: "Crear",
-          },
-          {
-            moduleId: module.id,
-            name: "Editar",
-          },
-          {
-            moduleId: module.id,
-            name: "Eliminar",
-          },
-          {
-            moduleId: module.id,
-            name: "Ver",
-          },
-        ],
-      });
+      if (module.name === "Dashboard") {
+        await db.modulePermission.createMany({
+          data: [
+            {
+              moduleId: module.id,
+              name: `Ver ${module.name}`,
+            },
+          ],
+        }); // No permissions for dashboard
+        return;
+      } else {
+        await db.modulePermission.createMany({
+          data: [
+            {
+              moduleId: module.id,
+              name: `Crear ${module.name}`,
+            },
+            {
+              moduleId: module.id,
+              name: `Editar ${module.name}`,
+            },
+            {
+              moduleId: module.id,
+              name: `Eliminar ${module.name}`,
+            },
+            {
+              moduleId: module.id,
+              name: `Ver ${module.name}`,
+            },
+          ],
+        });
+      }
     });
 
     const modulePermissions = await db.modulePermission.findMany();

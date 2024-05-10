@@ -2,6 +2,7 @@ import { db } from "@/lib/db/db";
 import { UserEntity } from "../../domain/entities/user.entity";
 import { BaseDataSourceImpl } from "@/features/common/infrastructure/datasource-implementation/base-datasource-implementation";
 import { RegisterUserPayload } from "../../domain/interfaces/register-user.interface";
+import { CreateUserDto } from "../../domain/dtos/create-user.dto";
 
 export class UserDataSourceImpl extends BaseDataSourceImpl<UserEntity> {
   constructor() {
@@ -25,6 +26,21 @@ export class UserDataSourceImpl extends BaseDataSourceImpl<UserEntity> {
       where: {
         email,
       },
+      include: {
+        userRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: {
+                    modulePermission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
     });
 
     if (!result) {
@@ -45,6 +61,76 @@ export class UserDataSourceImpl extends BaseDataSourceImpl<UserEntity> {
       },
     });
 
-    return result.map((user) => UserEntity.create(user));
+    return result.map((user: any) => UserEntity.create(user));
+  }
+
+  async getUserById(id: string): Promise<UserEntity | null> {
+    const result = await db.user.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: {
+                    modulePermission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return UserEntity.create(result);
+  }
+
+  async createNewUser(user: CreateUserDto): Promise<UserEntity | null> {
+    console.log(user);
+    const result = await db.user.create({
+      data: {
+        name: user.name,
+        email: user.email,
+        password: user.password,
+        userRoles: {
+          createMany: {
+            data:
+              user?.userRoles?.map((role) => {
+                return {
+                  roleId: role,
+                };
+              }) ?? [],
+          },
+        },
+      },
+      include: {
+        userRoles: {
+          include: {
+            role: {
+              include: {
+                rolePermissions: {
+                  include: {
+                    modulePermission: true,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+    return UserEntity.create(result);
   }
 }

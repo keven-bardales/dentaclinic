@@ -31,16 +31,16 @@ export class NewModuleUseCase {
       ...payload,
       permissions: [
         {
-          name: `${payload.name} - Ver`,
+          name: `Ver ${payload.name}`,
         },
         {
-          name: `${payload.name} - Crear`,
+          name: `Crear ${payload.name}`,
         },
         {
-          name: `${payload.name} - Editar`,
+          name: `Editar ${payload.name}`,
         },
         {
-          name: `${payload.name} - Eliminar`,
+          name: `Eliminar ${payload.name}`,
         },
       ],
     };

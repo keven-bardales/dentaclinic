@@ -20,4 +20,9 @@ export const bcryptAdapter = {
       throw new Error("Ocurrió un error al comparar las contraseñas");
     }
   },
+
+  generateRandomToken: async () => {
+    const token = crypto.randomUUID();
+    return token;
+  },
 };

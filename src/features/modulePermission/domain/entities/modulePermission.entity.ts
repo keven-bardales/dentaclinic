@@ -33,4 +33,16 @@ export class ModulePermissionEntity extends BaseEntity {
       obj.rolePermissions ? obj.rolePermissions.map((rolePermission: any) => RolePermissionEntity.create(rolePermission)) : []
     );
   }
+
+  toObject(): any {
+    return {
+      id: this.id,
+      name: this.name,
+      moduleId: this.moduleId,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      module: this.module ? this.module.toObject() : null,
+      rolePermissions: this.rolePermissions ? this.rolePermissions.map((rolePermission) => rolePermission.toObject()) : null,
+    };
+  }
 }

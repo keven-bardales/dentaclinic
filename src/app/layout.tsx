@@ -4,6 +4,7 @@ import "./globals.css";
 
 import MainProviders from "./(modules)/(shared)/providers/main-providers/main-providers";
 import { cn } from "../lib/utils/cn";
+import LoadingRemembermeLoader from "./(modules)/(shared)/(components)/loading-sign-in-loader";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -32,7 +33,10 @@ export default function RootLayout({
         />
       </head>
       <body className={cn(inter.className, "bg-surface overflow-hidden")}>
-        <MainProviders>{children}</MainProviders>
+        <MainProviders>
+          <LoadingRemembermeLoader />
+          {children}
+        </MainProviders>
       </body>
     </html>
   );

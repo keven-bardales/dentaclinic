@@ -63,17 +63,18 @@ model UserRoles {
 }
 
 model User {
-  id            String      @id @default(cuid())
-  name          String?
-  email         String?     @unique
-  emailVerified DateTime?
-  image         String?
-  password      String?
-  createdAt     DateTime    @default(now())
-  updatedAt     DateTime    @updatedAt
-  accounts      Account[]
-  sessions      Session[]
-  userRoles     UserRoles[]
+  id                     String      @id @default(cuid())
+  name                   String?
+  email                  String?     @unique
+  emailVerified          DateTime?
+  image                  String?
+  password               String?
+  changedDefaultPassword Boolean?    @default(false)
+  createdAt              DateTime    @default(now())
+  updatedAt              DateTime    @updatedAt
+  accounts               Account[]
+  sessions               Session[]
+  userRoles              UserRoles[]
 }
 
 model Account {
@@ -104,6 +105,7 @@ model Session {
   expires      DateTime
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+  rememberUser Boolean
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 

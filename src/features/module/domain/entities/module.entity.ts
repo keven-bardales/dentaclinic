@@ -29,4 +29,15 @@ export class ModuleEntity extends BaseEntity {
       obj.modulePermissions ? obj.modulePermissions.map((modulePermission: any) => ModulePermissionEntity.create(modulePermission)) : []
     );
   }
+
+  toObject(): any {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      modulePermissions: this.modulePermissions.map((modulePermission) => modulePermission.toObject()),
+    };
+  }
 }

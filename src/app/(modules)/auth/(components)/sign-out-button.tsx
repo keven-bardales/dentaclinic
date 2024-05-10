@@ -2,7 +2,8 @@
 
 import { signOut } from "next-auth/react";
 import { Button } from "primereact/button";
-import { useDashboardStore } from "../../(dashboard)/stores/dashboard-store";
+import { useDashboardStore } from "../../dashboard/(stores)/dashboard-store";
+import { deleteCookie } from "@/lib/utils/set-cookie";
 
 export default function SignOutButton() {
   const setClosingSession = useDashboardStore((state) => state.setClosingSession);
@@ -17,6 +18,8 @@ export default function SignOutButton() {
             resolve(null);
           }, 1000);
         });
+
+        deleteCookie("rememberme");
 
         await artificialDelay;
 

@@ -83,4 +83,20 @@ export class RoleDataSourceImpl extends BaseDataSourceImpl<RoleEntity> {
 
     return !!result;
   }
+
+  async checkRoleIds(roleIds: number[]): Promise<RoleEntity[] | null> {
+    const result = await db.role.findMany({
+      where: {
+        id: {
+          in: roleIds,
+        },
+      },
+    });
+
+    if (!result) {
+      return null;
+    }
+
+    return result.map((role) => RoleEntity.create(role));
+  }
 }

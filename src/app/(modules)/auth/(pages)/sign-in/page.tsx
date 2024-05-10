@@ -15,6 +15,7 @@ import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toas
 import { classNames } from "primereact/utils";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
+import { useDashboardStore } from "@/app/(modules)/dashboard/(stores)/dashboard-store";
 
 export default function SignInPage() {
   const [state, setState] = useState({
@@ -23,6 +24,8 @@ export default function SignInPage() {
 
   const { handleErrorsList, showToast } = useToast();
   const router = useRouter();
+
+  const isLogginRememberme = useDashboardStore((state) => state.isLogginRememberme);
 
   const {
     control,
@@ -58,15 +61,17 @@ export default function SignInPage() {
         detail: response.message,
         life: 3000,
       });
-      router.push("/");
+      router.push("/dashboard");
     }
 
     setState({ ...state, loadingLogin: false });
   };
 
+  if (isLogginRememberme) return null;
+
   return (
     <main className="flex items-center justify-center w-full h-screen max-h-screen px-3 sm:px-5">
-      <div className="overflow-auto w-full h-[80%] flex justify-center">
+      <div className="overflow-auto w-full h-[80%] max-h-[800px] flex justify-center">
         <div className="p-4 shadow-2xl bg-surface-card rounded-lg min-w-[250px] max-w-[550px] h-full w-full flex flex-col gap-y-8 overflow-auto">
           <div className="text-center gap-y-3 w-full flex flex-col justify-center items-center">
             <Image
@@ -86,7 +91,13 @@ export default function SignInPage() {
             </div>
           </div>
 
-          <div className="flex flex-col gap-y-8 mx-auto w-full">
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignIn();
+            }}
+            className="flex flex-col gap-y-8 mx-auto w-full"
+          >
             <Controller
               name="loginCredential"
               control={control}
@@ -128,20 +139,22 @@ export default function SignInPage() {
                   <div>
                     <div className="p-inputgroup">
                       <span className="p-inputgroup-addon">
-                        <i className="pi pi-user"></i>
+                        <i className="pi pi-lock"></i>
                       </span>
                       <span className="p-float-label">
-                        <Password
-                          footer={PassWordToolTip}
-                          toggleMask
+                        <InputText
+                          type="password"
                           value={field.value}
                           onChange={(e) => {
                             field.onChange(e.target.value);
                           }}
-                          inputId={field.name}
-                          placeholder="Contraseña"
+                          className={classNames({
+                            "p-invalid": fieldState.invalid,
+                          })}
+                          id={field.name}
+                          placeholder="Email o nombre de usuario"
                         />
-                        <label htmlFor="password">Contraseña</label>
+                        <label htmlFor={field.name}>Email o nombre de usuario</label>
                       </span>
                     </div>
                     <small id={`${field.name}-help`} className="p-error p-d-block">
@@ -167,17 +180,17 @@ export default function SignInPage() {
                 Olvidaste tu contraseña?
               </Link>
             </div>
-          </div>
 
-          <Button
-            disabled={!isValid}
-            loading={state.loadingLogin}
-            loadingIcon={<i className="pi pi-spin pi-spinner"></i>}
-            onClick={handleSubmit(handleSignIn)}
-            label="Iniciar sesión"
-            icon="pi pi-user"
-            className="w-full"
-          />
+            <Button
+              type="submit"
+              disabled={!isValid}
+              loading={state.loadingLogin}
+              loadingIcon={<i className="pi pi-spin pi-spinner"></i>}
+              label="Iniciar sesión"
+              icon="pi pi-user"
+              className="w-full"
+            />
+          </form>
         </div>
       </div>
     </main>

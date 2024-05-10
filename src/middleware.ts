@@ -1,8 +1,13 @@
 import { chain } from "./lib/utils/middleWare-chaining";
 
 import { authMiddleWare } from "./lib/middlewares/auth.middleware";
+import { NextResponse } from "next/server";
 
 export default chain([authMiddleWare]);
+
+// export default function middleWare() {
+//   return NextResponse.next();
+// }
 
 export const config = {
   matcher: [

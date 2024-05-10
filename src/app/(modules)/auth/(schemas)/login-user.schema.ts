@@ -17,4 +17,5 @@ export const loginUserSchema = z.object({
     .min(5, {
       message: "La contraseña debe tener al menos 8 caracteres",
     }),
+  rememberme: z.boolean(),
 });

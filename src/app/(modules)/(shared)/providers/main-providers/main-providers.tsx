@@ -13,7 +13,9 @@ import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 import React from "react";
 import { ToastContextProvider } from "../toast-provider/toast-provider";
-import { NavigationEvents } from "../../components/navigation-events";
+import { NavigationEvents } from "../../(components)/navigation-events";
+import RememberMe from "../../(components)/handle-remember-me";
+import LoadingRemembermeLoader from "../../(components)/loading-sign-in-loader";
 
 export default function MainProviders({ children }: { children: ReactNode }) {
   addLocale("es", {
@@ -92,6 +94,9 @@ export default function MainProviders({ children }: { children: ReactNode }) {
           {children}
           <Suspense fallback={null}>
             <NavigationEvents />
+          </Suspense>
+          <Suspense fallback={null}>
+            <RememberMe />
           </Suspense>
         </ToastContextProvider>
       </PrimeReactProvider>

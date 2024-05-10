@@ -38,4 +38,24 @@ export class AccountEntity {
       new DateWrapper(obj.updatedAt)
     );
   }
+
+  toObject(): any {
+    return {
+      id: this.id,
+      userId: this.userId,
+      type: this.type,
+      provider: this.provider,
+      providerAccountId: this.providerAccountId,
+      refreshToken: this.refreshToken,
+      accessToken: this.accessToken,
+      expiresAt: this.expiresAt,
+      tokenType: this.tokenType,
+      scope: this.scope,
+      idToken: this.idToken,
+      sessionState: this.sessionState,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      user: this.user ? this.user.toObject() : null,
+    };
+  }
 }

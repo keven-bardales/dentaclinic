@@ -19,12 +19,13 @@ export const login = async (values: z.infer<typeof loginUserSchema>) => {
     };
   }
 
-  const { loginCredential, password } = validatedFields.data;
+  const { loginCredential, password, rememberme } = validatedFields.data;
 
   try {
     const response = await signIn("credentials", {
       loginCredential,
       password,
+      rememberme,
       redirect: false,
     });
 

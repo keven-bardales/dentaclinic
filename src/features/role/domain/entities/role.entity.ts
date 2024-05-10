@@ -31,4 +31,16 @@ export class RoleEntity extends BaseEntity {
       obj.userRoles ? obj.userRoles.map((userRole: any) => UserRoleEntity.create(userRole)) : []
     );
   }
+
+  toObject(): any {
+    return {
+      id: this.id,
+      name: this.name,
+      description: this.description,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      rolePermissions: this.rolePermissions.map((rolePermission) => rolePermission.toObject()),
+      userRoles: this.userRoles.map((userRole) => userRole.toObject()),
+    };
+  }
 }

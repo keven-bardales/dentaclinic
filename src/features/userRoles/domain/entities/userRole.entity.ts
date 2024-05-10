@@ -32,4 +32,16 @@ export class UserRoleEntity {
       obj.role ? RoleEntity.create(obj.role) : null
     );
   }
+
+  toObject(): any {
+    return {
+      id: this.id,
+      userId: this.userId,
+      roleId: this.roleId,
+      createdAt: this.createdAt.toObject(),
+      updatedAt: this.updatedAt.toObject(),
+      user: this.user ? this.user.toObject() : null,
+      role: this.role ? this.role.toObject() : null,
+    };
+  }
 }

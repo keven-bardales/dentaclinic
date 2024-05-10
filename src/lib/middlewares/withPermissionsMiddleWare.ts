@@ -3,7 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { redirect } from "next/navigation";
 
 export const withPermissions =
-  (permissions: string[], shouldMatchAll = true) =>
+  (requiredPermissions: string[], shouldMatchAll = true) =>
   async (request: NextRequest) => {
     const session = await auth();
     const isLoggedIn = !!session;
@@ -13,14 +13,19 @@ export const withPermissions =
       return NextResponse.redirect(loginUrl);
     }
 
-    const userPermissions = ["admin"];
+    let hasPermission = true;
 
-    const hasPermission = shouldMatchAll
-      ? permissions.every((permission) => userPermissions.includes(permission))
-      : permissions.some((permission) => userPermissions.includes(permission));
+    if (shouldMatchAll) {
+      hasPermission = requiredPermissions.every((required) => session?.user?.permissions.some((permission) => required == permission.name));
+    }
 
-    if (!hasPermission) {
-      console.log("No tiene permisos");
+    if (!shouldMatchAll) {
+      hasPermission = requiredPermissions.some((required) => session?.user?.permissions.some((permission) => required == permission.name));
+    }
+
+    if (hasPermission) {
+      return NextResponse.next();
+    } else {
       return NextResponse.redirect(loginUrl);
     }
 

@@ -1,34 +1,37 @@
-import { flattenedRoutes, nextAuthPrefix } from "@/app/(modules)/(dashboard)/(constants)/navigation/navigation";
 import { auth } from "@/root/auth";
 import { NextResponse } from "next/server";
 import type { NextFetchEvent, NextRequest } from "next/server";
 import { routeMatchesPattern } from "../utils/route-match-pattern";
 import { CustomChainingMiddleware } from "../utils/middleWare-chaining";
 import { RouteMiddleware } from "./withPermissionsMiddleWare";
+import { flattenedRoutes, nextAuthPrefix } from "@/app/(modules)/dashboard/(constants)/navigation/navigation";
+import { PermissionsByModule } from "@/features/common/domain/enums/permissions-enum";
+import { cookies } from "next/headers";
+import { signIn } from "next-auth/react";
 
 export function authMiddleWare(middleware: CustomChainingMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     // The first middleware in the chain has to create the response
     // object and pass it down the chain.
+
     const response = NextResponse.next();
-    // response.cookies.set("vercel", "fast");
-
-    // Perform whatever logic the first middleware needs to do
-
-    // Call the next middleware and pass the request and response
-
-    const { pathname } = request.nextUrl;
 
     const session = await auth();
     const isLoggedIn = !!session;
 
+    const remembermeHasValue = cookies().get("rememberme");
+
+    const { pathname } = request.nextUrl;
+
     const isApiAuthRoute = pathname.startsWith(nextAuthPrefix);
-    const agendaUrl = new URL("/agenda", request.url);
-    const loginUrl = new URL("/auth/sign-in", request.url);
 
     if (isApiAuthRoute) {
       return NextResponse.next();
     }
+
+    const agendaUrl = new URL("/dashboard/agenda", request.url);
+    const loginUrl = new URL(`/auth/sign-in?pathname=${pathname}`, request.url);
+    const basePath = new URL("/", request.url);
 
     const requestedRoute = flattenedRoutes.find((route) => routeMatchesPattern(route.href, pathname));
 
@@ -39,8 +42,6 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
         const next = runRoutesMiddleWares(middleWares, index + 1);
         return current(request);
       }
-
-      return response;
     };
 
     if (requestedRoute) {
@@ -57,12 +58,22 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
       return NextResponse.redirect(loginUrl);
     }
 
-    if (pathname == "/") {
-      if (!isLoggedIn) {
-        return NextResponse.redirect(loginUrl);
-      } else {
+    if (pathname == "/dashboard") {
+      const canViewDashboard = session?.user.permissions.some((permission) => permission.name == PermissionsByModule.DASHBOARD.CANVIEWDASHBOARD);
+
+      if (isLoggedIn && canViewDashboard) {
         return NextResponse.redirect(agendaUrl);
       }
+
+      if (isLoggedIn && !canViewDashboard) {
+        return NextResponse.redirect(loginUrl);
+      }
+
+      if (!isLoggedIn) {
+        return NextResponse.redirect(basePath);
+      }
     }
+
+    return NextResponse.next();
   };
 }
