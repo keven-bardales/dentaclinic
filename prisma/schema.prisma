@@ -63,18 +63,19 @@ model UserRoles {
 }
 
 model User {
-  id                     String      @id @default(cuid())
+  id                     String         @id @default(cuid())
   name                   String?
-  email                  String?     @unique
+  email                  String?        @unique
   emailVerified          DateTime?
   image                  String?
   password               String?
-  changedDefaultPassword Boolean?    @default(false)
-  createdAt              DateTime    @default(now())
-  updatedAt              DateTime    @updatedAt
+  changedDefaultPassword Boolean?       @default(false)
+  createdAt              DateTime       @default(now())
+  updatedAt              DateTime       @updatedAt
   accounts               Account[]
   sessions               Session[]
   userRoles              UserRoles[]
+  UserSettings           UserSettings[]
 }
 
 model Account {
@@ -117,4 +118,323 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Quotation {
+  id               BigInt             @id @default(autoincrement())
+  startDate        DateTime
+  finalDate        DateTime
+  project          String
+  code             String
+  customerId       String
+  taxId            Int
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  customer         Customer           @relation(fields: [customerId], references: [id])
+  quotationDetails QuotationDetails[]
+  tax              Tax                @relation(fields: [taxId], references: [id])
+  Address          Address?           @relation(fields: [addressId], references: [id])
+  addressId        Int?
+}
+
+model Tax {
+  id               Int                @id @default(autoincrement())
+  name             String
+  percentage       Decimal
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  QuotationDetails QuotationDetails[]
+  Quotation        Quotation[]
+  Bill             Bill[]
+  BillDetails      BillDetails[]
+}
+
+model DiscountCodes {
+  id         Int      @id @default(autoincrement())
+  code       String
+  percentage Decimal
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+model Bill {
+  id          BigInt        @id @default(autoincrement())
+  startDate   DateTime
+  finalDate   DateTime
+  project     String
+  code        String
+  customerId  String
+  taxId       Int
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
+  customer    Customer      @relation(fields: [customerId], references: [id])
+  billDetails BillDetails[]
+  tax         Tax           @relation(fields: [taxId], references: [id])
+  Address     Address?      @relation(fields: [addressId], references: [id])
+  addressId   Int?
+}
+
+model BillDetails {
+  id                   BigInt   @id @default(autoincrement())
+  billId               BigInt
+  description          String
+  quantity             Int
+  priceWithDiscount    Decimal
+  priceWithTax         Decimal
+  subTotal             Decimal
+  subTotalWithDiscount Decimal
+  subTotalWithTax      Decimal
+  discountCode         String
+  discountPercentage   Decimal
+  discountAmount       Decimal
+  taxCode              String
+  taxPercentage        Decimal
+  taxAmount            Decimal
+  total                Decimal
+  taxId                Int
+  productId            Int
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+  bill                 Bill     @relation(fields: [billId], references: [id])
+  tax                  Tax      @relation(fields: [taxId], references: [id])
+  product              Product  @relation(fields: [productId], references: [id])
+}
+
+model QuotationDetails {
+  id                   BigInt    @id @default(autoincrement())
+  quotationId          BigInt
+  description          String
+  quantity             Int
+  priceWithDiscount    Decimal
+  priceWithTax         Decimal
+  subTotal             Decimal
+  subTotalWithDiscount Decimal
+  subTotalWithTax      Decimal
+  discountCode         String
+  discountPercentage   Decimal
+  discountAmount       Decimal
+  taxCode              String
+  taxPercentage        Decimal
+  taxAmount            Decimal
+  total                Decimal
+  taxId                Int
+  productId            Int
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  quotation            Quotation @relation(fields: [quotationId], references: [id])
+  tax                  Tax       @relation(fields: [taxId], references: [id])
+  product              Product   @relation(fields: [productId], references: [id])
+}
+
+model Product {
+  id               Int                @id @default(autoincrement())
+  name             String
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  productPriceList ProductPriceList[]
+  QuotationDetails QuotationDetails[]
+  ProductWarehouse ProductWarehouse[]
+  Address          Address?           @relation(fields: [addressId], references: [id])
+  addressId        Int?
+  BillDetails      BillDetails[]
+}
+
+model ProductPriceList {
+  id          BigInt                 @id @default(autoincrement())
+  productId   Int
+  salePrice   Decimal
+  startDate   DateTime
+  finalDate   DateTime
+  status      ProductPriceListStatus
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  product     Product                @relation(fields: [productId], references: [id])
+  priceList   PriceList?             @relation(fields: [priceListId], references: [id])
+  priceListId Int?
+}
+
+enum ProductPriceListStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model PriceList {
+  id        Int                @id @default(autoincrement())
+  name      String
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @updatedAt
+  priceList ProductPriceList[]
+}
+
+model ProductWarehouse {
+  id          Int                    @id @default(autoincrement())
+  productId   Int
+  warehouseId Int
+  stock       Int
+  cost        Decimal
+  status      ProductWarehouseStatus
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  product     Product                @relation(fields: [productId], references: [id])
+  warehouse   Warehouse              @relation(fields: [warehouseId], references: [id])
+}
+
+enum ProductWarehouseStatus {
+  ACTIVE
+  INACTIVE
+}
+
+model Warehouse {
+  id               Int                @id @default(autoincrement())
+  name             String
+  description      String?
+  createdAt        DateTime           @default(now())
+  updatedAt        DateTime           @updatedAt
+  ProductWarehouse ProductWarehouse[]
+  Address          Address?           @relation(fields: [addressId], references: [id])
+  addressId        Int?
+}
+
+model ProductCategory {
+  id            Int               @id @default(autoincrement())
+  name          String
+  parentId      Int?
+  createdAt     DateTime          @default(now())
+  updatedAt     DateTime          @updatedAt
+  parent        ProductCategory?  @relation("ProductCategoryToProductCategory", fields: [parentId], references: [id])
+  subCategories ProductCategory[] @relation("ProductCategoryToProductCategory")
+}
+
+model Customer {
+  id             String      @id @default(cuid())
+  name           String
+  lastName       String
+  fullName       String
+  Quotation      Quotation[]
+  customerPhones Phone[]
+  Address        Address?    @relation(fields: [addressId], references: [id])
+  addressId      Int?
+  Bill           Bill[]
+}
+
+model Phone {
+  id         Int                 @id @default(autoincrement())
+  customerId String?
+  providerId String?
+  employeeId String?
+  phone      String
+  status     CustomerPhoneStatus
+  type       PhoneType
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @updatedAt
+  customer   Customer?           @relation(fields: [customerId], references: [id])
+  provider   Provider?           @relation(fields: [providerId], references: [id])
+  employee   Employee?           @relation(fields: [employeeId], references: [id])
+}
+
+enum CustomerPhoneStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum PhoneType {
+  HOME
+  MOBILE
+  WORK
+}
+
+model Country {
+  id        Int       @id @default(autoincrement())
+  name      String
+  code      String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  states    State[]
+  Address   Address[]
+}
+
+model State {
+  id        Int       @id @default(autoincrement())
+  name      String
+  code      String
+  countryId Int
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  country   Country   @relation(fields: [countryId], references: [id])
+  cities    City[]
+  Address   Address[]
+}
+
+model City {
+  id            Int            @id @default(autoincrement())
+  name          String
+  code          String
+  stateId       Int
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  state         State          @relation(fields: [stateId], references: [id])
+  neighborhoods Neighborhood[]
+  Address       Address[]
+}
+
+model Neighborhood {
+  id        Int      @id @default(autoincrement())
+  name      String
+  code      String
+  cityId    Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  city      City     @relation(fields: [cityId], references: [id])
+}
+
+model Address {
+  id           Int         @id @default(autoincrement())
+  street       String
+  number       String
+  neighborhood String
+  cityId       Int
+  stateId      Int
+  countryId    Int
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  city         City        @relation(fields: [cityId], references: [id])
+  state        State       @relation(fields: [stateId], references: [id])
+  country      Country     @relation(fields: [countryId], references: [id])
+  customers    Customer[]
+  warehouses   Warehouse[]
+  employees    Employee[]
+  providers    Provider[]
+  quotations   Quotation[]
+  product      Product[]
+  Bill         Bill[]
+}
+
+model Provider {
+  id        String   @id @default(cuid())
+  name      String
+  lastName  String
+  fullName  String
+  phone     Phone[]
+  Address   Address? @relation(fields: [addressId], references: [id])
+  addressId Int?
+}
+
+model Employee {
+  id        String   @id @default(cuid())
+  name      String
+  lastName  String
+  fullName  String
+  phone     Phone[]
+  Address   Address? @relation(fields: [addressId], references: [id])
+  addressId Int?
+}
+
+model UserSettings {
+  id        Int      @id @default(autoincrement())
+  userId    String
+  settings  Json
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  user      User     @relation(fields: [userId], references: [id])
 }
