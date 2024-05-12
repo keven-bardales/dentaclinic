@@ -2,9 +2,20 @@
 import { useSession } from "next-auth/react";
 import BasicPageWrapper from "../../(components)/basic-page-wrapper";
 import { getCachedModules } from "../settings/(pages)/modules/(cached)/get-cached-modules";
+import { getCurrentUserSession } from "@/app/(modules)/(shared)/(actions)/current-user";
+import { useEffect } from "react";
 
 export default function AgendaPage() {
   const session = useSession();
+
+  const getUser = async () => {
+    const user = await getCurrentUserSession();
+    console.log(user);
+  };
+
+  useEffect(() => {
+    getUser();
+  }, []);
 
   return (
     <BasicPageWrapper>

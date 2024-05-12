@@ -2,13 +2,14 @@ import { LoggedInUserDto } from "@/features/user/domain/dtos/logged-in-user-dto"
 import NextAuth, { CredentialsSignin, type DefaultSession } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { db } from "@/lib/db/db";
-import authConfig from "./auth.config";
 import { GetBySessionTokenUseCase } from "@/features/user/domain/use-cases/get-by-session-token-use-case";
 import { UserPermissionDto } from "@/features/user/domain/dtos/user-permissions.dto";
 import { tr } from "@faker-js/faker";
 import { PrismaClient } from "@prisma/client/extension";
 import { use } from "react";
 import { setCookie } from "@/lib/utils/set-cookie";
+import Credentials from "next-auth/providers/credentials";
+import { LoginUseCase } from "@/features/user/domain/use-cases/login.use-case";
 
 class InvalidLoginError extends CredentialsSignin {
   code = "Invalid identifier or password";
@@ -31,6 +32,45 @@ declare module "next-auth" {
 }
 
 export const { signIn, signOut, auth, handlers } = NextAuth({
+  providers: [
+    Credentials({
+      id: "credentials",
+      name: "Credentials",
+      credentials: {
+        loginCredential: { label: "Username" },
+        password: { label: "Password", type: "password" },
+        rememberme: { label: "Remember me", type: "checkbox" },
+        rememberMeToken: { label: "Remember me token", type: "hidden" },
+        customRedirect: { label: "Custom redirect", type: "hidden" },
+      },
+      authorize: async (credentials) => {
+        const { loginCredential, password, rememberme } = credentials as any;
+
+        const rememberMeIsTrue = rememberme === "true" || rememberme == true;
+
+        const result = await new LoginUseCase().execute(loginCredential, password, rememberMeIsTrue, credentials?.rememberMeToken as string);
+
+        if (rememberMeIsTrue && result?.session?.sessionToken) {
+          setCookie({
+            cookie: "rememberme",
+            value: result?.session?.sessionToken,
+            path: "/",
+          });
+        }
+
+        if (!result) {
+          return null;
+        }
+
+        return result.toObject() as any;
+      },
+    }),
+  ],
+  pages: {
+    signIn: "/auth/sign-in",
+  },
+  trustHost: true,
+  secret: "secret",
   callbacks: {
     jwt: async ({ token, user, account, profile, session, trigger }) => {
       if (user) {
@@ -39,7 +79,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         token.name = user?.name;
         token.permissions = user?.permissions;
         token.sessionToken = user?.session.sessionToken;
-        token.expiresAt = new Date(Date.now() + 10 * 6000);
+        token.expiresAt = new Date(Date.now() + 10 * 60000);
 
         return token;
       }
@@ -82,19 +122,18 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         return token;
       }
 
-      return null;
+      return token;
     },
     session: async ({ session, token, user, newSession, trigger }) => {
-      session.user.id = token.id as string;
-      session.user.image = token.image as string;
-      session.user.name = token.name as string;
-      session.user.permissions = token.permissions as UserPermissionDto[];
+      if (token) {
+        session.user.id = token.id as string;
+        session.user.image = token.image as string;
+        session.user.name = token.name as string;
+        session.user.permissions = token.permissions as UserPermissionDto[];
+      }
 
       return session;
     },
   },
-  // @ts-ignore
-  adapter: PrismaAdapter(db),
   session: { strategy: "jwt" },
-  ...authConfig,
 });
