@@ -37,4 +37,33 @@ export class SessionDataSourceImpl extends BaseDataSourceImpl<SessionEntity> {
 
     return SessionEntity.create(session);
   }
+
+  async updateSession(session: SessionEntity): Promise<SessionEntity | null> {
+    const updatedSession = await db.session.update({
+      data: session.toDb,
+      where: {
+        id: session.id,
+      },
+    });
+
+    if (!updatedSession) {
+      return null;
+    }
+
+    return SessionEntity.create(updatedSession);
+  }
+
+  async getByUserId(userId: string): Promise<SessionEntity | null> {
+    const session = await db.session.findFirst({
+      where: {
+        userId,
+      },
+    });
+
+    if (!session) {
+      return null;
+    }
+
+    return SessionEntity.create(session);
+  }
 }

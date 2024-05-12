@@ -16,4 +16,12 @@ export class SessionRepositoryImpl extends BaseRepositoryImpl<SessionEntity> {
   getSessionByToken(token: string): Promise<SessionEntity | null> {
     return this.source.getSessionByToken(token);
   }
+
+  updateSession(session: SessionEntity): Promise<SessionEntity | null> {
+    return this.source.updateSession(session);
+  }
+
+  getByUserId(userId: string): Promise<SessionEntity | null> {
+    return this.source.getByUserId(userId);
+  }
 }

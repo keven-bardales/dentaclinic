@@ -8,7 +8,6 @@ export class DateWrapper {
   public toTimeString: string;
   public toISOString: string;
   public dateFormatter = new Intl.DateTimeFormat("es-HN", {});
-  public toDataBase: string;
 
   public date: Date;
   constructor(dateString: string | DateWrapper | Date) {
@@ -33,12 +32,20 @@ export class DateWrapper {
     this.toDateString = this.date.toDateString();
     this.toTimeString = this.date.toTimeString();
     this.toISOString = this.date.toISOString();
-    this.toDataBase = this.date.toISOString();
   }
 
   formatDate(options: Intl.DateTimeFormatOptions) {
     const formatter = new Intl.DateTimeFormat("es-HN", options);
     return formatter.format(this.date);
+  }
+
+  isBefore(date: DateWrapper) {
+    return this.date < date.date;
+  }
+
+  differenceInDays(date: DateWrapper) {
+    const diffTime = Math.abs(this.date.getTime() - date.date.getTime());
+    return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
   }
 
   toObject() {
@@ -53,5 +60,33 @@ export class DateWrapper {
       toTimeString: this.toTimeString,
       toISOString: this.toISOString,
     };
+  }
+
+  get toDataBase() {
+    return this.date;
+  }
+
+  get year() {
+    return this.date.getFullYear();
+  }
+
+  get month() {
+    return this.date.getMonth();
+  }
+
+  get day() {
+    return this.date.getDate();
+  }
+
+  get hours() {
+    return this.date.getHours();
+  }
+
+  get minutes() {
+    return this.date.getMinutes();
+  }
+
+  get seconds() {
+    return this.date.getSeconds();
   }
 }

@@ -1,3 +1,4 @@
+import { SessionEntity } from "@/features/session/domain/entities/session.entity";
 import { UserEntity } from "../entities/user.entity";
 import { UserPermissionDto } from "./user-permissions.dto";
 
@@ -11,10 +12,11 @@ export class LoggedInUserDto {
     public createdAt: UserEntity["createdAt"],
     public updatedAt: UserEntity["updatedAt"],
     public userRoles: UserEntity["userRoles"],
-    public permissions: UserPermissionDto[]
+    public permissions: UserPermissionDto[],
+    public session: SessionEntity
   ) {}
 
-  static create(user: UserEntity) {
+  static create(user: UserEntity, session: SessionEntity) {
     const permissions: UserPermissionDto[] = [];
 
     if (user?.userRoles && user.userRoles.some((userRole) => userRole.role)) {
@@ -41,7 +43,8 @@ export class LoggedInUserDto {
       user.createdAt,
       user.updatedAt,
       user.userRoles,
-      permissions
+      permissions,
+      session
     );
   }
 
@@ -56,6 +59,7 @@ export class LoggedInUserDto {
       updatedAt: this.updatedAt.toObject(),
       userRoles: this.userRoles ? this.userRoles.map((userRole) => userRole.toObject()) : null,
       permissions: this.permissions ? this.permissions.map((permission) => permission.toObject()) : null,
+      session: this.session.toObject(),
     };
   }
 }

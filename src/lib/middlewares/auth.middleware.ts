@@ -6,20 +6,15 @@ import { CustomChainingMiddleware } from "../utils/middleWare-chaining";
 import { RouteMiddleware } from "./withPermissionsMiddleWare";
 import { flattenedRoutes, nextAuthPrefix } from "@/app/(modules)/dashboard/(constants)/navigation/navigation";
 import { PermissionsByModule } from "@/features/common/domain/enums/permissions-enum";
-import { cookies } from "next/headers";
-import { signIn } from "next-auth/react";
 
 export function authMiddleWare(middleware: CustomChainingMiddleware) {
   return async (request: NextRequest, event: NextFetchEvent) => {
     // The first middleware in the chain has to create the response
     // object and pass it down the chain.
 
-    const response = NextResponse.next();
-
     const session = await auth();
-    const isLoggedIn = !!session;
 
-    const remembermeHasValue = cookies().get("rememberme");
+    const isLoggedIn = !!session;
 
     const { pathname } = request.nextUrl;
 
@@ -34,6 +29,14 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
     const basePath = new URL("/", request.url);
 
     const requestedRoute = flattenedRoutes.find((route) => routeMatchesPattern(route.href, pathname));
+
+    if (requestedRoute?.isProtected && !isLoggedIn) {
+      return NextResponse.redirect(loginUrl);
+    }
+
+    if (requestedRoute?.isProtected && !isLoggedIn) {
+      return NextResponse.redirect(loginUrl);
+    }
 
     const runRoutesMiddleWares = (middleWares: RouteMiddleware[], index = 0) => {
       const current = middleWares[index];
@@ -50,16 +53,12 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
       }
     }
 
-    if (requestedRoute?.isProtected && !isLoggedIn) {
-      return NextResponse.redirect(loginUrl);
-    }
-
     if (pathname === "/auth" && !isLoggedIn) {
       return NextResponse.redirect(loginUrl);
     }
 
     if (pathname == "/dashboard") {
-      const canViewDashboard = session?.user.permissions.some((permission) => permission.name == PermissionsByModule.DASHBOARD.CANVIEWDASHBOARD);
+      const canViewDashboard = session?.user.permissions?.some((permission) => permission?.name == PermissionsByModule?.DASHBOARD.CANVIEWDASHBOARD);
 
       if (isLoggedIn && canViewDashboard) {
         return NextResponse.redirect(agendaUrl);

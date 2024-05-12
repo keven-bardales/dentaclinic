@@ -1,7 +1,7 @@
 import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { UserEntity } from "@/features/user/domain/entities/user.entity";
-import { db } from "@/lib/db/db";
+import { Session } from "@prisma/client";
 
 export class SessionEntity extends BaseEntity {
   constructor(
@@ -17,7 +17,7 @@ export class SessionEntity extends BaseEntity {
     super(id, createdAt, updatedAt, "session");
   }
 
-  static create(obj: any) {
+  static create(obj: Session) {
     return new SessionEntity(
       obj.id,
       obj.sessionToken,
@@ -38,6 +38,18 @@ export class SessionEntity extends BaseEntity {
       createdAt: this.createdAt.toObject(),
       updatedAt: this.updatedAt.toObject(),
       user: this.user ? this.user.toObject() : null,
+    };
+  }
+
+  get toDb(): Session {
+    return {
+      createdAt: this.createdAt.date,
+      expires: this.expires.date,
+      id: this.id,
+      rememberUser: this.rememberUser,
+      sessionToken: this.sessionToken,
+      updatedAt: this.updatedAt.date,
+      userId: this.userId,
     };
   }
 }

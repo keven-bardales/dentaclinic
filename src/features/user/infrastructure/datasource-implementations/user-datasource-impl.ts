@@ -94,7 +94,6 @@ export class UserDataSourceImpl extends BaseDataSourceImpl<UserEntity> {
   }
 
   async createNewUser(user: CreateUserDto): Promise<UserEntity | null> {
-    console.log(user);
     const result = await db.user.create({
       data: {
         name: user.name,

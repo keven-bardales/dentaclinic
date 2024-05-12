@@ -7,12 +7,13 @@ import { newUserSchema } from "../schemas/new-user.schema";
 import { CreateUserDto } from "../dtos/create-user.dto";
 import { RoleRepositoryImpl } from "@/features/role/infrastructure/repository-implementation/role.repositoryImpl";
 import { UserEntity } from "../entities/user.entity";
+import { CreatedUserDto } from "../dtos/created-user.dto";
 
 export class CreateUserUseCase {
   repository = new UserRepositoryImpl();
   roleRepository = new RoleRepositoryImpl();
 
-  async execute(payload: CreateUserDto): Promise<ApiResponse<LoggedInUserDto | null>> {
+  async execute(payload: CreateUserDto): Promise<ApiResponse<CreatedUserDto | null>> {
     const validationResult = baseValidator(newUserSchema, {
       email: payload.email,
       password: payload.password,
@@ -66,7 +67,7 @@ export class CreateUserUseCase {
     }
 
     return ApiResponse.success({
-      data: LoggedInUserDto.create(result),
+      data: CreatedUserDto.create(result),
       message: "Usuario creado exitosamente",
       statusCode: 201,
     });

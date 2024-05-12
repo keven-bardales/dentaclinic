@@ -5,9 +5,12 @@ import { baseValidator } from "@/features/common/validators/base.validator";
 import { registerUserSchema } from "../schemas/register-user.schema";
 import { ApiResponse } from "@/features/common/wrappers/response-wrapper";
 import { RegisterUserPayload } from "../interfaces/register-user.interface";
+import { SessionRepositoryImpl } from "@/features/session/infrastructure/repository-implementarion/session-repository.implementation";
+import { SessionEntity } from "@/features/session/domain/entities/session.entity";
 
 export class RegisterUseCase {
   repository = new UserRepositoryImpl();
+  sessionRepository = new SessionRepositoryImpl();
 
   async execute(payload: RegisterUserPayload): Promise<ApiResponse<LoggedInUserDto | null>> {
     const validationResult = baseValidator(registerUserSchema, payload);
@@ -44,8 +47,33 @@ export class RegisterUseCase {
       });
     }
 
+    const sessionToken = await bcryptAdapter.generateRandomToken();
+
+    const expiration = new Date();
+
+    expiration.setHours(expiration.getHours() + 8);
+
+    const session = SessionEntity.create({
+      id: "",
+      sessionToken,
+      rememberUser: false,
+      userId: result.id,
+      expires: expiration,
+      createdAt: new Date(),
+      updatedAt: new Date(),
+    });
+
+    const newSession = await this.sessionRepository.createNewSession(session);
+
+    if (!newSession) {
+      return ApiResponse.internalServerError({
+        errors: ["Error al crear sesión"],
+        message: null,
+      });
+    }
+
     return ApiResponse.success({
-      data: LoggedInUserDto.create(result),
+      data: LoggedInUserDto.create(result, newSession),
       message: "Usuario creado exitosamente",
       statusCode: 201,
     });

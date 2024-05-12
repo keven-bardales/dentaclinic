@@ -1,50 +1,46 @@
-// import type { NextAuthConfig } from "next-auth";
-// import credentials from "next-auth/providers/credentials";
-// import { loginUserSchema } from "@/app/(modules)/auth/(schemas)/login-user.schema";
-// import { LoginUseCase } from "@/features/user/domain/use-cases/login.use-case";
+import { LoginUseCase } from "@/features/user/domain/use-cases/login.use-case";
+import { setCookie } from "@/lib/utils/set-cookie";
+import { NextAuthConfig } from "next-auth";
+import Credentials from "next-auth/providers/credentials";
 
-// export default {
-//   trustHost: true,
-//   providers: [
-//     credentials({
-//       authorize: async (credentials) => {
-//         const validatedFields = loginUserSchema.safeParse(credentials);
+export default {
+  providers: [
+    Credentials({
+      id: "credentials",
+      name: "Credentials",
+      credentials: {
+        loginCredential: { label: "Username" },
+        password: { label: "Password", type: "password" },
+        rememberme: { label: "Remember me", type: "checkbox" },
+        rememberMeToken: { label: "Remember me token", type: "hidden" },
+        customRedirect: { label: "Custom redirect", type: "hidden" },
+      },
+      authorize: async (credentials) => {
+        const { loginCredential, password, rememberme } = credentials as any;
 
-//         if (!validatedFields.success) {
-//           return null;
-//         }
+        const rememberMeIsTrue = rememberme === "true" || rememberme == true;
 
-//         const { loginCredential, password } = validatedFields.data;
+        const result = await new LoginUseCase().execute(loginCredential, password, rememberMeIsTrue, credentials?.rememberMeToken as string);
 
-//         const result = await new LoginUseCase().execute(loginCredential, password);
+        if (rememberMeIsTrue && result?.session?.sessionToken) {
+          setCookie({
+            cookie: "rememberme",
+            value: result?.session?.sessionToken,
+            path: "/",
+          });
+        }
 
-//         if (!result) {
-//           return null;
-//         }
+        if (!result) {
+          return null;
+        }
 
-//         return result;
-//       },
-//     }),
-//   ],
-//   pages: {
-//     signIn: "/auth/signin",
-//   },
-//   callbacks: {
-//     authorized: async ({ auth, request }) => {
-//       return true;
-//     },
-//     jwt: async ({ token, user, account, profile, session, trigger }) => {
-//       return token;
-//     },
-//     redirect: async ({ url, baseUrl }) => {
-//       return url;
-//     },
-//     session: async ({ session, token, user, newSession, trigger }) => {
-//       return session;
-//     },
-//     signIn: async ({ user, account, profile, email, credentials }) => {
-//       return true;
-//     },
-//   },
-//   secret: process.env.SECRET,
-// } satisfies NextAuthConfig;
+        return result.toObject() as any;
+      },
+    }),
+  ],
+  pages: {
+    signIn: "/auth/signin",
+  },
+  trustHost: true,
+  secret: "secret",
+} satisfies NextAuthConfig;

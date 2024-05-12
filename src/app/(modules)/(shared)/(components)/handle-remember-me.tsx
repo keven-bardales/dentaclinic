@@ -1,5 +1,5 @@
 "use client";
-import { getCookie } from "@/lib/utils/set-cookie";
+import { deleteCookie, getCookie } from "@/lib/utils/set-cookie";
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect } from "react";
@@ -31,6 +31,7 @@ export default function RememberMe() {
       if (response?.error == null) {
         router.push(path);
       } else {
+        deleteCookie("rememberme");
         router.push("/auth/sign-in");
       }
 
