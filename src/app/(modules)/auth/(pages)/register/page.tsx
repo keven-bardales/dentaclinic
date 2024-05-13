@@ -156,11 +156,9 @@ export default function RegisterPage() {
                       <i className="pi pi-lock"></i>
                     </span>
                     <span className="p-float-label">
-                      <Password
-                        footer={PassWordToolTip}
-                        toggleMask
+                      <InputText
+                        type="password"
                         value={field.value}
-                        inputId={field.name}
                         placeholder="Contraseña"
                         onChange={(e) => {
                           field.onChange(e.target.value);

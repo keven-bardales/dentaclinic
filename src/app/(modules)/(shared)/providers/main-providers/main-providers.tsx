@@ -1,23 +1,19 @@
 "use client";
-import { ReactNode, Suspense } from "react";
+import { ReactNode, Suspense, useEffect, useState } from "react";
 
 import { PrimeReactProvider } from "primereact/api";
 import { SessionProvider } from "next-auth/react";
 
 import { addLocale } from "primereact/api";
 
-// import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/themes/lara-dark-blue/theme.css";
-
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import React from "react";
 import { ToastContextProvider } from "../toast-provider/toast-provider";
 import { NavigationEvents } from "../../(components)/navigation-events";
 import RememberMe from "../../(components)/handle-remember-me";
-import LoadingRemembermeLoader from "../../(components)/loading-sign-in-loader";
 
 export default function MainProviders({ children }: { children: ReactNode }) {
+  const [isMounted, setIsMounted] = useState(false);
+
   addLocale("es", {
     firstDayOfWeek: 1,
     dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
@@ -32,6 +28,14 @@ export default function MainProviders({ children }: { children: ReactNode }) {
     weak: "Débil",
     strong: "Fuerte",
   });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  if (!isMounted) {
+    return null;
+  }
 
   return (
     <SessionProvider session={null}>
@@ -74,7 +78,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
               },
               column: {
                 headerCell: {
-                  className: "font-extrabold bg-[#1C2532] text-white",
+                  className: "font-extrabold",
                 },
               },
               wrapper: {

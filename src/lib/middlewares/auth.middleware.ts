@@ -38,34 +38,28 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
       return NextResponse.redirect(loginUrl);
     }
 
-    const runRoutesMiddleWares = (middleWares: RouteMiddleware[], index = 0) => {
-      const current = middleWares[index];
+    // const runRoutesMiddleWares = (middleWares: RouteMiddleware[], index = 0) => {
+    //   const current = middleWares[index];
 
-      if (current) {
-        const next = runRoutesMiddleWares(middleWares, index + 1);
-        return current(request);
-      }
-    };
+    //   if (current) {
+    //     const next = runRoutesMiddleWares(middleWares, index + 1);
+    //     return current(request);
+    //   }
+    // };
 
-    if (requestedRoute) {
-      if (requestedRoute.middleWares.length > 0) {
-        return runRoutesMiddleWares(requestedRoute.middleWares);
-      }
-    }
+    // if (requestedRoute) {
+    //   if (requestedRoute.middleWares.length > 0) {
+    //     return runRoutesMiddleWares(requestedRoute.middleWares);
+    //   }
+    // }
 
     if (pathname === "/auth" && !isLoggedIn) {
       return NextResponse.redirect(loginUrl);
     }
 
     if (pathname == "/dashboard") {
-      const canViewDashboard = session?.user.permissions?.some((permission) => permission?.name == PermissionsByModule?.DASHBOARD.CANVIEWDASHBOARD);
-
-      if (isLoggedIn && canViewDashboard) {
+      if (isLoggedIn) {
         return NextResponse.redirect(agendaUrl);
-      }
-
-      if (isLoggedIn && !canViewDashboard) {
-        return NextResponse.redirect(loginUrl);
       }
 
       if (!isLoggedIn) {

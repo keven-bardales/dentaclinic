@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+
+import "@/root/public/themes/primary.css";
 import "./globals.css";
+import "primereact/resources/primereact.css";
+import "primeicons/primeicons.css";
 
 import MainProviders from "./(modules)/(shared)/providers/main-providers/main-providers";
 import { cn } from "../lib/utils/cn";
@@ -19,25 +23,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="scrollbar-thumb-[#5898E6] scrollbar-track-[#1F2937]" lang="en">
-      <head>
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `
-              const style = document.createElement('style')
-              style.innerHTML = '@layer tailwind-base, primereact, tailwind-utilities;'
-              style.setAttribute('type', 'text/css')
-              document.querySelector('head').prepend(style)
-            `,
-          }}
-        />
-      </head>
-      <body className={cn(inter.className, "bg-surface overflow-hidden")}>
-        <MainProviders>
+    <html suppressHydrationWarning={true} lang="en">
+      <MainProviders>
+        <body className={cn(inter.className, "overflow-hidden")}>
           <LoadingRemembermeLoader />
           {children}
-        </MainProviders>
-      </body>
+        </body>
+      </MainProviders>
     </html>
   );
 }

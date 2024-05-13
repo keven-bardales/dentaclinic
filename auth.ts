@@ -84,43 +84,43 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         return token;
       }
 
-      const expiresAt = new Date(token.expiresAt as string);
-      const today = new Date();
+      // const expiresAt = new Date(token.expiresAt as string);
+      // const today = new Date();
 
-      if (today < expiresAt) {
-        return token;
-      }
-      if (today > expiresAt) {
-        const response = await fetch("http://localhost:3000/api/auth/refreshSession", {
-          method: "POST",
-          body: JSON.stringify({ sessionToken: token.sessionToken }),
-        });
+      // if (today < expiresAt) {
+      //   return token;
+      // }
+      // if (today > expiresAt) {
+      //   const response = await fetch("http://localhost:3000/api/auth/refreshSession", {
+      //     method: "POST",
+      //     body: JSON.stringify({ sessionToken: token.sessionToken }),
+      //   });
 
-        const responseData = await response.json();
+      //   const responseData = await response.json();
 
-        if (!response.ok) {
-          return null;
-        }
+      //   if (!response.ok) {
+      //     return null;
+      //   }
 
-        const userSession = responseData.data;
+      //   const userSession = responseData.data;
 
-        token.id = userSession?.id;
-        token.image = userSession?.image;
-        token.name = userSession?.name;
-        token.permissions = userSession?.permissions;
-        token.sessionToken = userSession?.session.sessionToken;
-        token.expiresAt = new Date(Date.now() + 10 * 6000);
+      //   token.id = userSession?.id;
+      //   token.image = userSession?.image;
+      //   token.name = userSession?.name;
+      //   token.permissions = userSession?.permissions;
+      //   token.sessionToken = userSession?.session.sessionToken;
+      //   token.expiresAt = new Date(Date.now() + 10 * 6000);
 
-        if (userSession?.session?.rememberUser) {
-          setCookie({
-            cookie: "rememberme",
-            value: userSession?.session?.sessionToken,
-            path: "/",
-          });
-        }
+      //   if (userSession?.session?.rememberUser) {
+      //     setCookie({
+      //       cookie: "rememberme",
+      //       value: userSession?.session?.sessionToken,
+      //       path: "/",
+      //     });
+      //   }
 
-        return token;
-      }
+      //   return token;
+      // }
 
       return token;
     },
@@ -135,5 +135,8 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
       return session;
     },
   },
-  session: { strategy: "jwt" },
+  session: {
+    strategy: "jwt",
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
 });
