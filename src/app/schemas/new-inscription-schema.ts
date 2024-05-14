@@ -1,5 +1,5 @@
 import * as z from "zod";
-const phoneRegex = /^(?:\+?(?:503|504)\-?)?(?:\d{4}\-?){2}\d{4}$/;
+const phoneRegex = /^\+\d{1,3}-\d{6,14}$/;
 
 export const inscriptionSchema = z.object({
   fullName: z
@@ -38,5 +38,9 @@ export const inscriptionSchema = z.object({
     })
     .min(1, "La descripción es requerido")
     .max(255, "La descripción no puede tener más de 255 caracteres"),
-  phone: z.string().min(1, "El nombre es requerido").max(15, "El nombre no puede tener más de 255 caracteres"),
+  phone: z.string().refine((value) => phoneRegex.test(value), {
+    message: "Ingrese un numero valido ej: +504-31956021",
+  }),
+  product: z.string().min(1, "El producto es requerido").max(255, "El producto no puede tener más de 255 caracteres"),
+  brand: z.string().min(1, "La marca es requerida").max(255, "La marca no puede tener más de 255 caracteres"),
 });

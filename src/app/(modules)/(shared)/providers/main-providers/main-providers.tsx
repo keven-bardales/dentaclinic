@@ -70,7 +70,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
             },
             datatable: {
               root: {
-                className: "!min-h-full lg:max-h-full rounded-lg flex flex-col gap-y-4 p-datatable-striped",
+                className: "!min-h-full lg:max-h-full rounded-lg flex flex-col gap-y-4 p-datatable-striped min-w-[1200px]",
               },
               paginator: {
                 root: {
@@ -83,7 +83,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
                 },
               },
               wrapper: {
-                className: "scrollbar-thin rounded-lg",
+                className: "overflow-auto rounded-lg",
               },
               bodyRow: {
                 className: "!p-0 cursor-pointer hover:bg-highlight",

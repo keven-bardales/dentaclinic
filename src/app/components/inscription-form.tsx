@@ -29,6 +29,7 @@ export default function InscriptionForm({ className }: { className: string }) {
     handleSubmit,
     formState: { isValid },
   } = useForm({
+    mode: "onChange",
     defaultValues: {
       fullName: "",
       email: "",
@@ -67,7 +68,7 @@ export default function InscriptionForm({ className }: { className: string }) {
         <Image src={logoExpo} className="w-56" alt="Logo Expo construye" />
       </div>
 
-      <div className="w-full text-center">
+      <div className="w-full text-center mb-2">
         <h2 className="font-extrabold text-white text-3xl xl:text-3xl w-full">Registrate con nosotros</h2>
       </div>
 
@@ -234,7 +235,7 @@ export default function InscriptionForm({ className }: { className: string }) {
                       }}
                     />
                     <label className={classNames({ "p-error": fieldState?.invalid })} htmlFor={field.name}>
-                      Descripción
+                      Comentarios
                     </label>
                   </span>
                 </div>
@@ -294,7 +295,7 @@ export default function InscriptionForm({ className }: { className: string }) {
                     <InputText
                       id={field.name}
                       name={field.name}
-                      placeholder="Producto"
+                      placeholder="Producto de interés"
                       value={field.value}
                       className={classNames({ "p-invalid": fieldState.invalid })}
                       onChange={(e) => {
@@ -302,7 +303,7 @@ export default function InscriptionForm({ className }: { className: string }) {
                       }}
                     />
                     <label className={classNames({ "p-error": fieldState?.invalid })} htmlFor={field.name}>
-                      Producto
+                      Producto de interés
                     </label>
                   </span>
                 </div>
@@ -328,7 +329,7 @@ export default function InscriptionForm({ className }: { className: string }) {
                     <InputText
                       id={field.name}
                       name={field.name}
-                      placeholder="Marca"
+                      placeholder="Marca de interes"
                       value={field.value}
                       className={classNames({ "p-invalid": fieldState.invalid })}
                       onChange={(e) => {
@@ -336,7 +337,7 @@ export default function InscriptionForm({ className }: { className: string }) {
                       }}
                     />
                     <label className={classNames({ "p-error": fieldState?.invalid })} htmlFor={field.name}>
-                      Marca
+                      Marca de interés
                     </label>
                   </span>
                 </div>

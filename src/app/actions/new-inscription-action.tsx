@@ -7,58 +7,75 @@ import { ApiResponse } from "@/features/common/wrappers/response-wrapper";
 import { inscriptionSchema } from "../schemas/new-inscription-schema";
 import { render } from "@react-email/render";
 import { InscriptionEmail } from "@/root/emails/inscription";
+import { revalidatePath } from "next/cache";
 
 export default async function newInscriptionAction(values: z.infer<typeof inscriptionSchema>): Promise<ApiResponse<any>> {
-  const validatedFields = inscriptionSchema.safeParse(values);
+  try {
+    const validatedFields = inscriptionSchema.safeParse(values);
 
-  const { data, error } = validatedFields;
+    const { data, error } = validatedFields;
 
-  if (!data) {
+    if (!data) {
+      const response = ApiResponse.error({
+        errors: error.errors.map((e) => e.message),
+        message: "Error en los campos",
+        statusCode: 400,
+      });
+
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    const checkIfExists = await db.inscription.findFirst({
+      where: {
+        email: data.email,
+      },
+    });
+
+    if (checkIfExists) {
+      const response = ApiResponse.error({
+        errors: ["Ya existe una inscripción con este correo electrónico"],
+        message: "Ya existe una inscripción con este correo electrónico",
+        statusCode: 400,
+      });
+
+      return JSON.parse(JSON.stringify(response));
+    }
+
+    const inscription = await db.inscription.create({
+      data: {
+        name: data.fullName,
+        email: data.email,
+        company: data.company,
+        city: data.city,
+        description: data.description,
+        phone: data.phone,
+        product: data.product,
+        brand: data.brand,
+      },
+    });
+
+    revalidatePath("/dashboard/inscriptions");
+
+    sendEmail(data);
+
+    const response = ApiResponse.success({
+      data: inscription,
+      message: "Muchas gracias por inscribirte en la Expoconstruye 2024",
+      statusCode: 200,
+    });
+
+    return JSON.parse(JSON.stringify(response));
+  } catch (error) {
     const response = ApiResponse.error({
-      errors: error.errors.map((e) => e.message),
-      message: "Error en los campos",
-      statusCode: 400,
+      // @ts-ignore
+      errors: [error?.message],
+      // @ts-ignore
+      message: error?.message,
+      statusCode: 500,
     });
 
     return JSON.parse(JSON.stringify(response));
   }
-
-  const checkIfExists = await db.inscription.findFirst({
-    where: {
-      email: data.email,
-    },
-  });
-
-  if (checkIfExists) {
-    const response = ApiResponse.error({
-      errors: ["Ya existe una inscripción con este correo electrónico"],
-      message: "Ya existe una inscripción con este correo electrónico",
-      statusCode: 400,
-    });
-
-    return JSON.parse(JSON.stringify(response));
-  }
-
-  const inscription = await db.inscription.create({
-    data: {
-      city: data.city,
-      email: data.email,
-      name: data.fullName,
-      company: data.company,
-      phone: data.phone,
-      description: data.description,
-    },
-  });
-
-  sendEmail(data);
-
-  const response = ApiResponse.success({
-    data: inscription,
-    message: "Muchas gracias por inscribirte en la Expoconstruye 2024",
-    statusCode: 200,
-  });
-
-  return JSON.parse(JSON.stringify(response));
 }
 
 async function sendEmail(data: z.infer<typeof inscriptionSchema>) {

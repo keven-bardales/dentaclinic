@@ -82,7 +82,7 @@ export default function SignInPage() {
               src={"https://blocks.primereact.org/demo/images/blocks/logos/hyper.svg"}
             ></Image>
 
-            <div className="text-4xl font-bold">Bienvenido de vuelta</div>
+            <div className="text-4xl font-bold">Bienvenido</div>
             <div>
               <span className="font-medium line-height-3">Aun no tienes una cuenta?</span>
               <Link href={"/auth/register"} className="font-medium ml-2 text-blue-500 cursor-pointer">
@@ -152,9 +152,9 @@ export default function SignInPage() {
                             "p-invalid": fieldState.invalid,
                           })}
                           id={field.name}
-                          placeholder="Email o nombre de usuario"
+                          placeholder="Contraseña"
                         />
-                        <label htmlFor={field.name}>Email o nombre de usuario</label>
+                        <label htmlFor={field.name}>Contraseña</label>
                       </span>
                     </div>
                     <small id={`${field.name}-help`} className="p-error p-d-block">

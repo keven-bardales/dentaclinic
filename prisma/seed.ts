@@ -29,8 +29,11 @@ const main = async () => {
           name: "Modulos",
           description: "",
         },
+        {
+          name: "Configuración",
+          description: "",
+        },
       ],
-      skipDuplicates: true,
     });
 
     const createdModules = await db.module.findMany();
@@ -105,7 +108,7 @@ const main = async () => {
             },
           });
         } else {
-          if (modulePermission.module.name == "Inscripciones") {
+          if (modulePermission.module.name == "Inscripciones" && role.name == "Encargado de inscripciones") {
             await db.rolePermissions.create({
               data: {
                 rolId: role.id,
@@ -141,6 +144,12 @@ const main = async () => {
       ],
     });
 
+    const inscriptionsRole = await db.role.findFirst({
+      where: {
+        name: "Encargado de inscripciones",
+      },
+    });
+
     const users = await db.user.findMany();
 
     roles.forEach(async (role: any) => {
@@ -152,6 +161,23 @@ const main = async () => {
           },
         });
       });
+    });
+
+    const createdUserRole = await db.user.create({
+      data: {
+        email: "inscripciones@gmail.com",
+        emailVerified: new Date(),
+        image: faker.image.avatar(),
+        name: "Encargado de inscripciones",
+        password: await bcryptAdapter.hash("Pl4tin0"),
+      },
+    });
+
+    await db.userRoles.create({
+      data: {
+        userId: createdUserRole.id,
+        roleId: inscriptionsRole.id,
+      },
     });
   } catch (error) {
     console.log(error);
