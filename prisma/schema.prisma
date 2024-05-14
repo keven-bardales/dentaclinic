@@ -129,6 +129,8 @@ model Inscription {
   city         String
   description  String?
   registeredBy String?
+  product      String?
+  bramd        String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
   registered   User?    @relation(fields: [registeredBy], references: [id])

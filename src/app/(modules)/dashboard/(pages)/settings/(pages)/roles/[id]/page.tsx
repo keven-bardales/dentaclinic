@@ -30,11 +30,7 @@ export default async function RoleDetailPage({
             <div className="flex flex-wrap lg:flex-nowrap gap-y-5 gap-x-6 pb-5">
               <RoleUsersListbox className="w-full max-h-[500px] min-h-[500px] overflow-hidden" roleString={JSON.stringify(role.data)} />
 
-              <RolePerssionsListbox
-                className="w-full max-h-[500px] min-h-[500px] overflow-hidden"
-                roleString={JSON.stringify(role.data)}
-                permissionsGroupedString={JSON.stringify(permissionsGrouped.data)}
-              />
+              <RolePerssionsListbox roleString={JSON.stringify(role.data)} permissionsGroupedString={JSON.stringify(permissionsGrouped.data)} />
             </div>
           </>
         );

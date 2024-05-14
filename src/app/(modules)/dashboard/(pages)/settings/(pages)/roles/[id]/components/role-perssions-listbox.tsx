@@ -10,16 +10,9 @@ import { removeOrAddRolePermissionsAction } from "../actions/remove-add-role-per
 import { Dropdown } from "primereact/dropdown";
 import { useToast } from "@/app/(modules)/(shared)/providers/toast-provider/toast-provider";
 import { useState } from "react";
+import { Card } from "primereact/card";
 
-export default function RolePerssionsListbox({
-  roleString,
-  permissionsGroupedString,
-  className,
-}: {
-  roleString: string;
-  permissionsGroupedString: string;
-  className: string;
-}) {
+export default function RolePerssionsListbox({ roleString, permissionsGroupedString }: { roleString: string; permissionsGroupedString: string }) {
   const router = useRouter();
   const originalParams = useSearchParams();
   const pathName = usePathname();
@@ -27,6 +20,7 @@ export default function RolePerssionsListbox({
   const urlFilter = originalParams.get("filter") ?? "all";
   const role = JSON.parse(roleString) as RoleWithUsersAndPermissionsIdsDto;
   const permissionsGroupedOriginal = JSON.parse(permissionsGroupedString) as PermissionsGroupedByModuleDto[];
+  const [selectedPermission, setSelectedPermission] = useState<ModulePermissionDto | null>(null);
   const { handleActionResponse } = useToast();
   const [state, setState] = useState({
     updatingPermissionsIds: [] as number[],
@@ -128,49 +122,44 @@ export default function RolePerssionsListbox({
     </div>
   );
 
-  const itemTemplate = (item: ModulePermissionDto) => {
-    return (
-      <div className="flex items-center justify-between">
-        <span>{item.name}</span>
-        <InputSwitch
-          disabled={state.updatingPermissionsIds.includes(item.id)}
-          onChange={async (e) => {
-            if (state.updatingPermissionsIds.includes(item.id)) return;
-            setState({ ...state, updatingPermissionsIds: [...state.updatingPermissionsIds, item.id] });
-            const response = await removeOrAddRolePermissionsAction(role.id, [item.id], e.value ? "add" : "remove");
-            const deserialized = JSON.parse(response);
-            handleActionResponse(deserialized);
-            setTimeout(() => {
-              setState({ ...state, updatingPermissionsIds: state.updatingPermissionsIds.filter((id) => id !== item.id) });
-            }, 500);
-          }}
-          checked={role.permissionsIds.some((permission) => permission == item.id)}
-        />
-      </div>
-    );
-  };
-
   return (
-    <ListBox
-      emptyFilterMessage="No se encontraron permisos"
-      emptyMessage="No se encontraron permisos"
-      filterTemplate={filterTemplate}
-      filter
-      className={className}
-      listStyle={{ maxHeight: "calc(100vh - 300px)" }}
-      pt={{
-        wrapper: {
-          className: "scrollbar-thin ",
-        },
-        emptyMessage: {
-          className: "p-5 text-center font-bold text-lg",
-        },
-      }}
-      options={filteredPermissions}
-      optionLabel="name"
-      optionGroupLabel="moduleName"
-      optionGroupChildren="permissions"
-      itemTemplate={itemTemplate}
-    ></ListBox>
+    <div className="w-full max-h-[500px] min-h-[500px] overflow-hidden flex flex-col gap-y-4 p-4 border-2">
+      {filterTemplate}
+      <div className="overflow-auto">
+        {filteredPermissions.map((modulepermission) => {
+          return (
+            <div key={`${modulepermission.moduleName}`}>
+              <h2 className="text-lg">{modulepermission.moduleName}</h2>
+              <hr className="w-full h-[3px]" />
+
+              <div className="flex flex-col">
+                {modulepermission.permissions.map((permission) => {
+                  return (
+                    <div key={permission.id} className="flex justify-between hover:bg-highlight p-3">
+                      <span>{permission.name}</span>
+                      <InputSwitch
+                        disabled={state.updatingPermissionsIds.includes(permission.id)}
+                        onChange={async (e) => {
+                          e.stopPropagation();
+                          if (state.updatingPermissionsIds.includes(permission.id)) return;
+                          setState({ ...state, updatingPermissionsIds: [...state.updatingPermissionsIds, permission.id] });
+                          const response = await removeOrAddRolePermissionsAction(role.id, [permission.id], e.value ? "add" : "remove");
+                          const deserialized = JSON.parse(response);
+                          handleActionResponse(deserialized);
+                          setTimeout(() => {
+                            setState({ ...state, updatingPermissionsIds: state.updatingPermissionsIds.filter((id) => id !== permission.id) });
+                          }, 500);
+                        }}
+                        checked={role.permissionsIds.some((roleId) => roleId == permission.id)}
+                      />
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }

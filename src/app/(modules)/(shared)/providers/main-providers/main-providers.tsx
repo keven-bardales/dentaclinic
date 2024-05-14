@@ -45,6 +45,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
           ripple: true,
           locale: "es",
           pt: {
+            inputtext: {},
             dialog: {
               root: {
                 style: {

@@ -12,6 +12,8 @@ import { DashboardNavigation } from "../(constants)/navigation/navigation";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { routeMatchesPattern, routeMatchesPatternActiveLink } from "@/lib/utils/route-match-pattern";
+import { getCurrentUserSession } from "../../(shared)/(actions)/current-user";
+import { Session } from "next-auth";
 
 const Module = ({ item, index }: { item: (typeof DashboardNavigation)[0]; index: number }) => {
   const sidebarMode = useDashboardStore((state) => state.sidebarMode);
@@ -162,6 +164,7 @@ export default function SidebarButton() {
   const isMobile = useDashboardStore((state) => state.isMobile);
   const setSidebarMode = useDashboardStore((state) => state.setSidebarMode);
   const setIsMobile = useDashboardStore((state) => state.setIsMobile);
+  const [session, setSession] = useState<null | Session>(null);
 
   const handleMediaQueryChange = useCallback(
     (event: MediaQueryListEvent) => {
@@ -185,7 +188,18 @@ export default function SidebarButton() {
     };
   }, [handleMediaQueryChange]);
 
+  const getUser = useCallback(async () => {
+    const response = await getCurrentUserSession();
+    setSession(response);
+  }, []);
+
+  useEffect(() => {
+    getUser();
+  }, [getUser]);
+
   const isOpen = sidebarMode === SidebarModes.OPEN;
+
+  if (!session) return null;
 
   return (
     <>
@@ -211,11 +225,14 @@ export default function SidebarButton() {
                 <Button type="button" autoFocus={false} ref={closeIconRef as any} onClick={(e) => hide(e)} text icon="pi pi-times" rounded />
               </div>
               <div className="overflow-y-auto w-full">
-                {DashboardNavigation.map((item, index) => (
-                  <ul className="list-none p-3 m-0" key={`${item.title}-${index}`}>
-                    <Module item={item} index={index} />
-                  </ul>
-                ))}
+                {DashboardNavigation.map((item, index) =>
+                  session?.user?.permissions?.some((permission) => item?.permissions?.some((perm) => perm == permission.name)) ||
+                  item?.permissions?.length == 0 ? (
+                    <ul className="list-none p-3 m-0" key={`${item.title}-${index}`}>
+                      <Module item={item} index={index} />
+                    </ul>
+                  ) : null
+                )}
               </div>
             </div>
           </>

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 
-import "@/root/public/themes/primary.css";
-import "./globals.css";
-import "primereact/resources/primereact.css";
 import "primeicons/primeicons.css";
+import "primereact/resources/primereact.css";
+import "./globals.css";
 
 import MainProviders from "./(modules)/(shared)/providers/main-providers/main-providers";
 import { cn } from "../lib/utils/cn";
@@ -24,12 +23,25 @@ export default function RootLayout({
 }>) {
   return (
     <html suppressHydrationWarning={true} lang="en">
-      <MainProviders>
-        <body className={cn(inter.className, "overflow-hidden")}>
+      <head>
+        <link id="theme-css" href={`/themes/viva-light/theme.css`} rel="stylesheet"></link>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              const style = document.createElement('style')
+              style.innerHTML = '@layer tailwind-base, primereact, tailwind-utilities;'
+              style.setAttribute('type', 'text/css')
+              document.querySelector('head').prepend(style)
+            `,
+          }}
+        />
+      </head>
+      <body className={cn(inter.className, "overflow-hidden")}>
+        <MainProviders>
           <LoadingRemembermeLoader />
           {children}
-        </body>
-      </MainProviders>
+        </MainProviders>
+      </body>
     </html>
   );
 }

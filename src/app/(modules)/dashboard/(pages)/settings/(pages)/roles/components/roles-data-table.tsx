@@ -33,7 +33,7 @@ export default function RolesDataTable({ initialRoles }: { initialRoles: string 
         scrollable
         paginator
         onRowClick={(e) => {
-          router.push(`/settings/roles/${e.data.id}`);
+          router.push(`/dashboard/settings/roles/${e.data.id}`);
         }}
         rows={10}
         rowsPerPageOptions={[5, 10, 25, 50]}

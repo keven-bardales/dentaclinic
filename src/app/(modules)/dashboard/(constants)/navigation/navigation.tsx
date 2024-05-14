@@ -1,3 +1,4 @@
+import { BASIC_PERMISSIONS } from "@/app/basic-permissions/basic-permissions";
 import { PermissionsByModule } from "@/features/common/domain/enums/permissions-enum";
 import { RouteMiddleware, withPermissions } from "@/lib/middlewares/withPermissionsMiddleWare";
 
@@ -14,7 +15,7 @@ export type NavigationItem = {
 
 export const DashboardNavigation: NavigationItem[] = [
   {
-    title: "Modulo principal",
+    title: "Dashboard",
     permissions: [],
     middleWares: [],
     isProtected: true,
@@ -22,41 +23,14 @@ export const DashboardNavigation: NavigationItem[] = [
     icon: <i className="pi pi-home"></i>,
     children: [
       {
-        title: "Agenda",
-        href: "/dashboard/agenda",
+        title: "Inscripciones",
+        href: "/dashboard/inscriptions",
         icon: <i className="pi pi-calendar"></i>,
         permissions: [],
-        middleWares: [withPermissions([PermissionsByModule.AGENDA.VIEW])],
-        isProtected: true,
-        children: [],
-      },
-      {
-        title: "Pacientes",
-        href: "/dashboard/patients",
-        icon: <i className="pi pi-users"></i>,
-        permissions: [],
-        middleWares: [withPermissions([PermissionsByModule.PATIENTS.VIEW])],
-        isProtected: true,
-        children: [],
-      },
-      {
-        title: "Reportes",
-        href: "/dashboard/reports",
-        icon: <i className="pi pi-chart-line"></i>,
-        permissions: [],
+        // middleWares: [withPermissions([PermissionsByModule.AGENDA.VIEW])],
         middleWares: [],
         isProtected: true,
-        children: [
-          {
-            title: "Children",
-            href: "/dashboard/reports/children2",
-            icon: <i className="pi pi-chart-line"></i>,
-            permissions: [],
-            middleWares: [],
-            isProtected: true,
-            children: [],
-          },
-        ],
+        children: [],
       },
     ],
   },
@@ -64,7 +38,7 @@ export const DashboardNavigation: NavigationItem[] = [
     title: "Configuración",
     href: "/dashboard/settings",
     icon: <i className="pi pi-cog"></i>,
-    permissions: [],
+    permissions: [BASIC_PERMISSIONS.SETTINGS.CANVIEW],
     middleWares: [],
     isProtected: true,
     children: [
@@ -72,7 +46,7 @@ export const DashboardNavigation: NavigationItem[] = [
         title: "Usuarios",
         href: "/dashboard/settings/users",
         icon: <i className="pi pi-users"></i>,
-        permissions: [],
+        permissions: [BASIC_PERMISSIONS.USERS.CANVIEW],
         middleWares: [],
         isProtected: true,
         children: [],
@@ -89,8 +63,8 @@ export const DashboardNavigation: NavigationItem[] = [
             title: "Detalle de rol",
             href: "/settings/roles/[id]",
             icon: <i className="pi pi-users"></i>,
-            permissions: [],
-            middleWares: [withPermissions(["CanViewroleDetail"], false)],
+            permissions: [BASIC_PERMISSIONS.ROLES.CANVIEW],
+            middleWares: [],
             isProtected: true,
             renders: false,
             children: [],
@@ -101,7 +75,7 @@ export const DashboardNavigation: NavigationItem[] = [
         title: "Modulos",
         href: "/dashboard/settings/modules",
         icon: <i className="pi pi-users"></i>,
-        permissions: [],
+        permissions: [BASIC_PERMISSIONS.MODULES.CANVIEW],
         middleWares: [],
         isProtected: true,
         children: [],
