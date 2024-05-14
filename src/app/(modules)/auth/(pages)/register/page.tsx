@@ -175,7 +175,7 @@ export default function RegisterPage() {
               )}
             />
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <Controller
                 name="rememberme"
                 control={control}
@@ -196,7 +196,7 @@ export default function RegisterPage() {
                   </div>
                 )}
               />
-            </div>
+            </div> */}
 
             <Button
               loading={state.loadingRegister}

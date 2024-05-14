@@ -3,7 +3,6 @@ import * as z from "zod";
 
 import Nodemailer from "nodemailer";
 import { db } from "@/lib/db/db";
-import { stripIndents } from "common-tags";
 import { ApiResponse } from "@/features/common/wrappers/response-wrapper";
 import { inscriptionSchema } from "../schemas/new-inscription-schema";
 import { render } from "@react-email/render";
@@ -24,21 +23,21 @@ export default async function newInscriptionAction(values: z.infer<typeof inscri
     return JSON.parse(JSON.stringify(response));
   }
 
-  // const checkIfExists = await db.inscription.findFirst({
-  //   where: {
-  //     email: data.email,
-  //   },
-  // });
+  const checkIfExists = await db.inscription.findFirst({
+    where: {
+      email: data.email,
+    },
+  });
 
-  // if (checkIfExists) {
-  //   const response = ApiResponse.error({
-  //     errors: ["Ya existe una inscripción con este correo electrónico"],
-  //     message: "Ya existe una inscripción con este correo electrónico",
-  //     statusCode: 400,
-  //   });
+  if (checkIfExists) {
+    const response = ApiResponse.error({
+      errors: ["Ya existe una inscripción con este correo electrónico"],
+      message: "Ya existe una inscripción con este correo electrónico",
+      statusCode: 400,
+    });
 
-  //   return JSON.parse(JSON.stringify(response));
-  // }
+    return JSON.parse(JSON.stringify(response));
+  }
 
   const inscription = await db.inscription.create({
     data: {

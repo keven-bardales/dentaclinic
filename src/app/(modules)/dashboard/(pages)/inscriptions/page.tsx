@@ -7,7 +7,6 @@ export default async function AgendaPage() {
 
   return (
     <BasicPageWrapper>
-      <h1>Agenda Page</h1>
       <InscriptionsDataTable inscriptions={inscriptions} />
     </BasicPageWrapper>
   );

@@ -13,6 +13,7 @@ const main = async () => {
     await db.role.deleteMany();
     await db.modulePermission.deleteMany();
     await db.module.deleteMany();
+    await db.inscription.deleteMany();
 
     await db.module.createMany({
       data: [
@@ -21,12 +22,12 @@ const main = async () => {
           description: "Dashboard module",
         },
         {
-          name: "Pacientes",
-          description: "Patients module",
+          name: "Inscripciones",
+          description: "",
         },
         {
-          name: "Citas",
-          description: "Appointments module",
+          name: "Modulos",
+          description: "",
         },
       ],
       skipDuplicates: true,
@@ -69,7 +70,11 @@ const main = async () => {
       }
     });
 
-    const modulePermissions = await db.modulePermission.findMany();
+    const modulePermissions = await db.modulePermission.findMany({
+      include: {
+        module: true,
+      },
+    });
 
     await db.role.createMany({
       data: [
@@ -81,6 +86,10 @@ const main = async () => {
           name: "SuperAdmin",
           description: "User",
         },
+        {
+          name: "Encargado de inscripciones",
+          description: "Encargado de inscripciones",
+        },
       ],
     });
 
@@ -88,12 +97,23 @@ const main = async () => {
 
     modulePermissions.forEach(async (modulePermission: any) => {
       roles.forEach(async (role: any) => {
-        await db.rolePermissions.create({
-          data: {
-            rolId: role.id,
-            modulePermissionId: modulePermission.id,
-          },
-        });
+        if (role.name == "SuperAdmin") {
+          await db.rolePermissions.create({
+            data: {
+              rolId: role.id,
+              modulePermissionId: modulePermission.id,
+            },
+          });
+        } else {
+          if (modulePermission.module.name == "Inscripciones") {
+            await db.rolePermissions.create({
+              data: {
+                rolId: role.id,
+                modulePermissionId: modulePermission.id,
+              },
+            });
+          }
+        }
       });
     });
 
@@ -116,7 +136,7 @@ const main = async () => {
         {
           email: "keven.bardales@gmail.com",
           name: "Keven Bardales",
-          password: await bcryptAdapter.hash("123456"),
+          password: await bcryptAdapter.hash("123456789"),
         },
       ],
     });

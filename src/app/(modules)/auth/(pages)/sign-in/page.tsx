@@ -165,7 +165,7 @@ export default function SignInPage() {
               }}
             />
 
-            <div className="flex items-center justify-between">
+            {/* <div className="flex items-center justify-between">
               <div className="flex items-center gap-x-2">
                 <Controller
                   name="rememberme"
@@ -179,7 +179,7 @@ export default function SignInPage() {
               <Link href={"/auth/forgot-password"} className="font-medium text-blue-500 text-right cursor-pointer">
                 Olvidaste tu contraseña?
               </Link>
-            </div>
+            </div> */}
 
             <Button
               type="submit"
