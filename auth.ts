@@ -41,7 +41,6 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         password: { label: "Password", type: "password" },
         rememberme: { label: "Remember me", type: "checkbox" },
         rememberMeToken: { label: "Remember me token", type: "hidden" },
-        customRedirect: { label: "Custom redirect", type: "hidden" },
       },
       authorize: async (credentials) => {
         const { loginCredential, password, rememberme } = credentials as any;

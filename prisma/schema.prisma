@@ -63,19 +63,31 @@ model UserRoles {
 }
 
 model User {
-  id                     String         @id @default(cuid())
+  id                     String             @id @default(cuid())
   name                   String?
-  email                  String?        @unique
+  email                  String?            @unique
   emailVerified          DateTime?
   image                  String?
   password               String?
-  changedDefaultPassword Boolean?       @default(false)
-  createdAt              DateTime       @default(now())
-  updatedAt              DateTime       @updatedAt
+  changedDefaultPassword Boolean?           @default(false)
+  createdAt              DateTime           @default(now())
+  updatedAt              DateTime           @updatedAt
   accounts               Account[]
   sessions               Session[]
   userRoles              UserRoles[]
   UserSettings           UserSettings[]
+  UserBranchOffice       UserBranchOffice[]
+}
+
+model UserBranchOffice {
+  id             Int          @id @default(autoincrement())
+  userId         String
+  branchOfficeId Int
+  isDefault      Boolean
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  user           User         @relation(fields: [userId], references: [id])
+  branchOffice   BranchOffice @relation(fields: [branchOfficeId], references: [id])
 }
 
 model Account {
@@ -120,133 +132,249 @@ model VerificationToken {
   @@unique([identifier, token])
 }
 
+model Bill {
+  id             BigInt        @id @default(autoincrement())
+  startDate      DateTime
+  finalDate      DateTime
+  project        String
+  code           String
+  documentType   DocumentTypes
+  customerId     String
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+  customer       Customer      @relation(fields: [customerId], references: [id])
+  billDetails    BillDetails[]
+  addressId      Int?
+  branchOfficeId Int?
+  Address        Address?      @relation(fields: [addressId], references: [id])
+  quotationId    BigInt?       @unique
+  Quotation      Quotation?    @relation(fields: [quotationId], references: [id])
+  branchOffice   BranchOffice? @relation(fields: [branchOfficeId], references: [id])
+}
+
+model BillDetails {
+  id                     BigInt                   @id @default(autoincrement())
+  billId                 BigInt
+  quotationId            BigInt
+  description            String
+  quantity               Int
+  priceWithDiscount      Decimal
+  priceWithTax           Decimal
+  subTotal               Decimal
+  subTotalWithDiscount   Decimal
+  subTotalWithTax        Decimal
+  discountPercentage     Decimal
+  discountAmount         Decimal
+  taxPercentage          Decimal
+  taxAmount              Decimal
+  total                  Decimal
+  productId              Int
+  createdAt              DateTime                 @default(now())
+  updatedAt              DateTime                 @updatedAt
+  bill                   Bill                     @relation(fields: [billId], references: [id])
+  product                Product                  @relation(fields: [productId], references: [id])
+  BillDetailTax          BillDetailTax[]
+  BillDetailDiscountCode BillDetailDiscountCode[]
+}
+
+model BillDetailTax {
+  id           Int         @id @default(autoincrement())
+  billDetailId BigInt
+  taxId        Int
+  createdAt    DateTime    @default(now())
+  updatedAt    DateTime    @updatedAt
+  billDetail   BillDetails @relation(fields: [billDetailId], references: [id])
+  tax          Tax         @relation(fields: [taxId], references: [id])
+}
+
+model BillDetailDiscountCode {
+  id             Int          @id @default(autoincrement())
+  billDetailId   BigInt
+  discountCodeId Int
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  billDetail     BillDetails  @relation(fields: [billDetailId], references: [id])
+  discountCode   DiscountCode @relation(fields: [discountCodeId], references: [id])
+}
+
 model Quotation {
   id               BigInt             @id @default(autoincrement())
   startDate        DateTime
   finalDate        DateTime
   project          String
   code             String
+  total            Decimal
+  subtotal         Decimal
+  tax              Decimal
+  discount         Decimal
+  documentType     DocumentTypes
   customerId       String
-  taxId            Int
   createdAt        DateTime           @default(now())
   updatedAt        DateTime           @updatedAt
   customer         Customer           @relation(fields: [customerId], references: [id])
+  branchOfficeId   Int?
   quotationDetails QuotationDetails[]
-  tax              Tax                @relation(fields: [taxId], references: [id])
-  Address          Address?           @relation(fields: [addressId], references: [id])
   addressId        Int?
+  Address          Address?           @relation(fields: [addressId], references: [id])
+  bill             Bill?
+  branchOffice     BranchOffice?      @relation(fields: [branchOfficeId], references: [id])
 }
 
-model Tax {
-  id               Int                @id @default(autoincrement())
-  name             String
-  percentage       Decimal
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  QuotationDetails QuotationDetails[]
-  Quotation        Quotation[]
-  Bill             Bill[]
-  BillDetails      BillDetails[]
-}
-
-model DiscountCodes {
-  id         Int      @id @default(autoincrement())
-  code       String
-  percentage Decimal
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
-}
-
-model Bill {
-  id          BigInt        @id @default(autoincrement())
-  startDate   DateTime
-  finalDate   DateTime
-  project     String
-  code        String
-  customerId  String
-  taxId       Int
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
-  customer    Customer      @relation(fields: [customerId], references: [id])
-  billDetails BillDetails[]
-  tax         Tax           @relation(fields: [taxId], references: [id])
-  Address     Address?      @relation(fields: [addressId], references: [id])
-  addressId   Int?
-}
-
-model BillDetails {
-  id                   BigInt   @id @default(autoincrement())
-  billId               BigInt
-  description          String
-  quantity             Int
-  priceWithDiscount    Decimal
-  priceWithTax         Decimal
-  subTotal             Decimal
-  subTotalWithDiscount Decimal
-  subTotalWithTax      Decimal
-  discountCode         String
-  discountPercentage   Decimal
-  discountAmount       Decimal
-  taxCode              String
-  taxPercentage        Decimal
-  taxAmount            Decimal
-  total                Decimal
-  taxId                Int
-  productId            Int
-  createdAt            DateTime @default(now())
-  updatedAt            DateTime @updatedAt
-  bill                 Bill     @relation(fields: [billId], references: [id])
-  tax                  Tax      @relation(fields: [taxId], references: [id])
-  product              Product  @relation(fields: [productId], references: [id])
+enum DocumentTypes {
+  INVOICE
+  ORDER
+  QUOTATION
+  DELIVERY_ORDER
+  PURCHASE_ORDER
+  CREDIT_NOTE
+  DEBIT_NOTE
+  RECEIPT
+  PAYMENT
+  EXPENSE
 }
 
 model QuotationDetails {
-  id                   BigInt    @id @default(autoincrement())
-  quotationId          BigInt
-  description          String
-  quantity             Int
-  priceWithDiscount    Decimal
-  priceWithTax         Decimal
-  subTotal             Decimal
-  subTotalWithDiscount Decimal
-  subTotalWithTax      Decimal
-  discountCode         String
-  discountPercentage   Decimal
-  discountAmount       Decimal
-  taxCode              String
-  taxPercentage        Decimal
-  taxAmount            Decimal
-  total                Decimal
-  taxId                Int
-  productId            Int
-  createdAt            DateTime  @default(now())
-  updatedAt            DateTime  @updatedAt
-  quotation            Quotation @relation(fields: [quotationId], references: [id])
-  tax                  Tax       @relation(fields: [taxId], references: [id])
-  product              Product   @relation(fields: [productId], references: [id])
+  id                          BigInt                        @id @default(autoincrement())
+  quotationId                 BigInt
+  description                 String
+  quantity                    Int
+  price                       Decimal
+  priceWithDiscount           Decimal
+  priceWithTax                Decimal
+  subTotal                    Decimal
+  subTotalWithDiscount        Decimal
+  subTotalWithTax             Decimal
+  discountPercentage          Decimal
+  discountAmount              Decimal
+  taxPercentage               Decimal
+  taxAmount                   Decimal
+  total                       Decimal
+  productId                   Int
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime                      @updatedAt
+  quotation                   Quotation                     @relation(fields: [quotationId], references: [id])
+  product                     Product                       @relation(fields: [productId], references: [id])
+  QuotationDetailTax          QuotationDetailTax[]
+  QuotationDetailDiscountCode QuotationDetailDiscountCode[]
+}
+
+model QuotationDetailTax {
+  id                Int              @id @default(autoincrement())
+  quotationDetailId BigInt
+  taxId             Int
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  quotationDetail   QuotationDetails @relation(fields: [quotationDetailId], references: [id])
+  tax               Tax              @relation(fields: [taxId], references: [id])
+}
+
+model QuotationDetailDiscountCode {
+  id                Int              @id @default(autoincrement())
+  quotationDetailId BigInt
+  discountCodeId    Int
+  createdAt         DateTime         @default(now())
+  updatedAt         DateTime         @updatedAt
+  quotationDetail   QuotationDetails @relation(fields: [quotationDetailId], references: [id])
+  discountCode      DiscountCode     @relation(fields: [discountCodeId], references: [id])
+}
+
+model Tax {
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  percentage         Decimal
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  QuotationDetailTax QuotationDetailTax[]
+  BillDetailTax      BillDetailTax[]
+}
+
+model DiscountCode {
+  id                          Int                           @id @default(autoincrement())
+  code                        String
+  percentage                  Decimal
+  createdAt                   DateTime                      @default(now())
+  updatedAt                   DateTime                      @updatedAt
+  QuotationDetailDiscountCode QuotationDetailDiscountCode[]
+  BillDetailDiscountCode      BillDetailDiscountCode[]
+}
+
+model BranchOffice {
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  addressId            Int
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
+  address              Address                @relation(fields: [addressId], references: [id])
+  Warehouse            Warehouse[]
+  Bill                 Bill[]
+  Quotation            Quotation[]
+  EmployeeBranchOffice EmployeeBranchOffice[]
+  UserBranchOffice     UserBranchOffice[]
+  BranchOfficePhones   BranchOfficePhones[]
+  BranchOfficeFaxes    BranchOfficeFaxes[]
+  Company              Company                @relation(fields: [companyId], references: [id])
+  companyId            Int
+}
+
+model BranchOfficePhones {
+  id             Int          @id @default(autoincrement())
+  branchOfficeId Int
+  phoneId        BigInt
+  status         PhoneStatus
+  isMainPhone    Boolean
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  branchOffice   BranchOffice @relation(fields: [branchOfficeId], references: [id])
+  phone          Phone        @relation(fields: [phoneId], references: [id])
+}
+
+model BranchOfficeFaxes {
+  id             Int          @id @default(autoincrement())
+  branchOfficeId Int
+  faxId          Int
+  status         PhoneStatus
+  isMainFax      Boolean
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  branchOffice   BranchOffice @relation(fields: [branchOfficeId], references: [id])
+  fax            Fax          @relation(fields: [faxId], references: [id])
 }
 
 model Product {
-  id               Int                @id @default(autoincrement())
-  name             String
-  description      String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  productPriceList ProductPriceList[]
-  QuotationDetails QuotationDetails[]
-  ProductWarehouse ProductWarehouse[]
-  Address          Address?           @relation(fields: [addressId], references: [id])
-  addressId        Int?
-  BillDetails      BillDetails[]
+  id                      Int                       @id @default(autoincrement())
+  name                    String
+  categoryId              Int
+  description             String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  productPriceList        ProductPriceList[]
+  quoteDetails            QuotationDetails[]
+  ProductWarehouse        ProductWarehouse[]
+  ProductWarehouseHistory ProductWarehouseHistory[]
+  ProductPricelistHistory ProductPricelistHistory[]
+  BillDetails             BillDetails[]
+  category                ProductCategory           @relation(fields: [categoryId], references: [id])
 }
 
 model ProductPriceList {
   id          BigInt                 @id @default(autoincrement())
   productId   Int
   salePrice   Decimal
-  startDate   DateTime
-  finalDate   DateTime
   status      ProductPriceListStatus
+  createdAt   DateTime               @default(now())
+  updatedAt   DateTime               @updatedAt
+  product     Product                @relation(fields: [productId], references: [id])
+  priceList   PriceList?             @relation(fields: [priceListId], references: [id])
+  priceListId Int?
+}
+
+model ProductPricelistHistory {
+  id          BigInt                 @id @default(autoincrement())
+  productId   Int
+  salePrice   Decimal
+  status      ProductPriceListStatus
+  startDate   DateTime
+  endDate     DateTime
   createdAt   DateTime               @default(now())
   updatedAt   DateTime               @updatedAt
   product     Product                @relation(fields: [productId], references: [id])
@@ -260,11 +388,19 @@ enum ProductPriceListStatus {
 }
 
 model PriceList {
-  id        Int                @id @default(autoincrement())
-  name      String
-  createdAt DateTime           @default(now())
-  updatedAt DateTime           @updatedAt
-  priceList ProductPriceList[]
+  id                      Int                       @id @default(autoincrement())
+  name                    String
+  description             String?
+  status                  PriceListStatus
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  priceList               ProductPriceList[]
+  ProductPricelistHistory ProductPricelistHistory[]
+}
+
+enum PriceListStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model ProductWarehouse {
@@ -280,60 +416,120 @@ model ProductWarehouse {
   warehouse   Warehouse              @relation(fields: [warehouseId], references: [id])
 }
 
+model ProductWarehouseHistory {
+  id          Int       @id @default(autoincrement())
+  productId   Int
+  warehouseId Int
+  stock       Int
+  cost        Decimal
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  product     Product   @relation(fields: [productId], references: [id])
+  warehouse   Warehouse @relation(fields: [warehouseId], references: [id])
+}
+
 enum ProductWarehouseStatus {
   ACTIVE
   INACTIVE
 }
 
 model Warehouse {
-  id               Int                @id @default(autoincrement())
-  name             String
-  description      String?
-  createdAt        DateTime           @default(now())
-  updatedAt        DateTime           @updatedAt
-  ProductWarehouse ProductWarehouse[]
-  Address          Address?           @relation(fields: [addressId], references: [id])
-  addressId        Int?
+  id                      Int                       @id @default(autoincrement())
+  name                    String
+  description             String?
+  createdAt               DateTime                  @default(now())
+  updatedAt               DateTime                  @updatedAt
+  ProductWarehouse        ProductWarehouse[]
+  Address                 Address?                  @relation(fields: [addressId], references: [id])
+  addressId               Int?
+  branchOfficeId          Int?
+  ProductWarehouseHistory ProductWarehouseHistory[]
+  warehouseStatus         WarehouseStatus
+  branchOffice            BranchOffice?             @relation(fields: [branchOfficeId], references: [id])
+}
+
+enum WarehouseStatus {
+  ACTIVE
+  INACTIVE
 }
 
 model ProductCategory {
   id            Int               @id @default(autoincrement())
   name          String
   parentId      Int?
+  categoryLevel CategoryLevel
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
   parent        ProductCategory?  @relation("ProductCategoryToProductCategory", fields: [parentId], references: [id])
   subCategories ProductCategory[] @relation("ProductCategoryToProductCategory")
+  Product       Product[]
+}
+
+enum CategoryLevel {
+  LEVEL_1
+  LEVEL_2
 }
 
 model Customer {
-  id             String      @id @default(cuid())
+  id             String           @id @default(cuid())
   name           String
   lastName       String
   fullName       String
-  Quotation      Quotation[]
+  type           CustomerTypes
+  dni            String?
+  rtn            String?
+  quotes         Quotation[]
   customerPhones Phone[]
-  Address        Address?    @relation(fields: [addressId], references: [id])
-  addressId      Int?
+  customerAdress CustomerAdress[]
   Bill           Bill[]
 }
 
-model Phone {
-  id         Int                 @id @default(autoincrement())
-  customerId String?
-  providerId String?
-  employeeId String?
-  phone      String
-  status     CustomerPhoneStatus
-  type       PhoneType
-  createdAt  DateTime            @default(now())
-  updatedAt  DateTime            @updatedAt
-  customer   Customer?           @relation(fields: [customerId], references: [id])
-  provider   Provider?           @relation(fields: [providerId], references: [id])
-  employee   Employee?           @relation(fields: [employeeId], references: [id])
+enum CustomerTypes {
+  COMPANY
+  INDIVIDUAL
 }
 
-enum CustomerPhoneStatus {
+model CustomerAdress {
+  id         Int      @id @default(autoincrement())
+  customerId String
+  addressId  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  customer   Customer @relation(fields: [customerId], references: [id])
+  address    Address  @relation(fields: [addressId], references: [id])
+}
+
+model Phone {
+  id                 BigInt               @id @default(autoincrement())
+  customerId         String?
+  providerId         String?
+  employeeId         String?
+  phone              String
+  status             PhoneStatus
+  type               PhoneType
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime             @updatedAt
+  customer           Customer?            @relation(fields: [customerId], references: [id])
+  provider           Provider?            @relation(fields: [providerId], references: [id])
+  employee           Employee?            @relation(fields: [employeeId], references: [id])
+  BranchOfficePhones BranchOfficePhones[]
+  CompanyPhones      CompanyPhones[]
+}
+
+model Fax {
+  id                Int                 @id @default(autoincrement())
+  fax               String
+  status            PhoneStatus
+  type              PhoneType
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  BranchOfficeFaxes BranchOfficeFaxes[]
+  CompanyFaxes      CompanyFaxes[]
+}
+
+enum PhoneStatus {
   ACTIVE
   INACTIVE
 }
@@ -379,55 +575,128 @@ model City {
 }
 
 model Neighborhood {
-  id        Int      @id @default(autoincrement())
+  id        Int       @id @default(autoincrement())
   name      String
   code      String
   cityId    Int
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  city      City     @relation(fields: [cityId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  city      City      @relation(fields: [cityId], references: [id])
+  Address   Address[]
 }
 
 model Address {
-  id           Int         @id @default(autoincrement())
-  street       String
-  number       String
-  neighborhood String
-  cityId       Int
-  stateId      Int
-  countryId    Int
-  createdAt    DateTime    @default(now())
-  updatedAt    DateTime    @updatedAt
-  city         City        @relation(fields: [cityId], references: [id])
-  state        State       @relation(fields: [stateId], references: [id])
-  country      Country     @relation(fields: [countryId], references: [id])
-  customers    Customer[]
-  warehouses   Warehouse[]
-  employees    Employee[]
-  providers    Provider[]
-  quotations   Quotation[]
-  product      Product[]
-  Bill         Bill[]
+  id               Int               @id @default(autoincrement())
+  fullAddress      String
+  street           String
+  number           String
+  neighborhoodName String
+  neighborhoodId   Int?
+  cityId           Int
+  stateId          Int
+  countryId        Int
+  createdAt        DateTime          @default(now())
+  updatedAt        DateTime          @updatedAt
+  city             City              @relation(fields: [cityId], references: [id])
+  state            State             @relation(fields: [stateId], references: [id])
+  country          Country           @relation(fields: [countryId], references: [id])
+  neighborhood     Neighborhood?     @relation(fields: [neighborhoodId], references: [id])
+  warehouses       Warehouse[]
+  employees        Employee[]
+  ProviderAdress   ProviderAdress[]
+  EmployeeAddress  EmployeeAddress[]
+  CustomerAdress   CustomerAdress[]
+  Bill             Bill[]
+  Quotation        Quotation[]
+  BranchOffice     BranchOffice[]
 }
 
 model Provider {
-  id        String   @id @default(cuid())
-  name      String
-  lastName  String
-  fullName  String
-  phone     Phone[]
-  Address   Address? @relation(fields: [addressId], references: [id])
-  addressId Int?
+  id             String           @id @default(cuid())
+  name           String
+  lastName       String
+  fullName       String
+  phone          Phone[]
+  ProviderAdress ProviderAdress[]
+}
+
+model ProviderAdress {
+  id         Int      @id @default(autoincrement())
+  providerId String
+  addressId  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  provider   Provider @relation(fields: [providerId], references: [id])
+  address    Address  @relation(fields: [addressId], references: [id])
 }
 
 model Employee {
-  id        String   @id @default(cuid())
-  name      String
-  lastName  String
-  fullName  String
-  phone     Phone[]
-  Address   Address? @relation(fields: [addressId], references: [id])
-  addressId Int?
+  id                   String                 @id @default(cuid())
+  name                 String
+  lastName             String
+  fullName             String
+  phones               Phone[]
+  Address              Address?               @relation(fields: [addressId], references: [id])
+  addressId            Int?
+  EmployeeAddress      EmployeeAddress[]
+  EmployeeBranchOffice EmployeeBranchOffice[]
+}
+
+model EmployeeBranchOffice {
+  id             Int          @id @default(autoincrement())
+  employeeId     String
+  branchOfficeId Int
+  isDefault      Boolean
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+  employee       Employee     @relation(fields: [employeeId], references: [id])
+  branchOffice   BranchOffice @relation(fields: [branchOfficeId], references: [id])
+}
+
+model EmployeeAddress {
+  id         Int      @id @default(autoincrement())
+  employeeId String
+  addressId  Int
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  address    Address  @relation(fields: [addressId], references: [id])
+}
+
+model Company {
+  id            Int             @id @default(autoincrement())
+  name          String
+  acronym       String
+  rtn           String
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
+  branches      BranchOffice[]
+  CompanyFaxes  CompanyFaxes[]
+  CompanyPhones CompanyPhones[]
+}
+
+model CompanyFaxes {
+  id        Int         @id @default(autoincrement())
+  companyId Int
+  faxId     Int
+  status    PhoneStatus
+  isMainFax Boolean
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  company   Company     @relation(fields: [companyId], references: [id])
+  fax       Fax         @relation(fields: [faxId], references: [id])
+}
+
+model CompanyPhones {
+  id          Int         @id @default(autoincrement())
+  companyId   Int
+  phoneId     BigInt
+  status      PhoneStatus
+  isMainPhone Boolean
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  company     Company     @relation(fields: [companyId], references: [id])
+  phone       Phone       @relation(fields: [phoneId], references: [id])
 }
 
 model UserSettings {
