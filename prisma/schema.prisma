@@ -642,6 +642,8 @@ model Employee {
   addressId            Int?
   EmployeeAddress      EmployeeAddress[]
   EmployeeBranchOffice EmployeeBranchOffice[]
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime               @updatedAt
 }
 
 model EmployeeBranchOffice {

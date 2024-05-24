@@ -2,6 +2,10 @@ import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { PhoneStatusEnum } from "../enums/phone-status.entity";
 import { CustomerEntity } from "@/features/customer/domain/entities/customer.entity";
+import { BranchOfficePhoneEntity } from "@/features/branch-office-phone/domain/entities/branch-office-phone.entity";
+import { CompanyPhoneEntity } from "@/features/company-phone/domain/entities/company-phone.entity";
+import { EmployeeEntity } from "@/features/employee/domain/entities/employee.entity";
+import { ProviderEntity } from "@/features/provider/domain/entity/provider.entity";
 
 export class PhoneEntity extends BaseEntity {
   static tableName = "phone";

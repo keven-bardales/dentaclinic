@@ -1,7 +1,11 @@
+import { AddressEntity } from "@/features/address/domain/entities/address.entity";
+import { BillEntity } from "@/features/bill/domain/entities/bill-entity";
+import { BranchOfficeEntity } from "@/features/branch-office/domain/entities/branch-office.entity";
 import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { TypesOfDocuments } from "@/features/common/domain/enums/document-types";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { CustomerEntity } from "@/features/customer/domain/entities/customer.entity";
+import { QuotationDetailsEntity } from "@/features/quotation-details/domain/entities/quotation-detail.entity";
 import { Prisma } from "@prisma/client";
 
 export class QuotationEntity extends BaseEntity {
@@ -21,13 +25,13 @@ export class QuotationEntity extends BaseEntity {
     public customerId: string,
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper,
-    public customer: CustomerEntity,
+    public customer: CustomerEntity | null,
     public branchOfficeId: number,
-    public branchOffice: BranchOfficeEntity,
-    public quotationDetails: QuotationDetailEntity[],
+    public branchOffice: BranchOfficeEntity | null,
+    public quotationDetails: QuotationDetailsEntity[],
     public adressId: number,
-    public address: AddressEntity,
-    public bill: BillEntity
+    public address: AddressEntity | null,
+    public bill: BillEntity | null
   ) {
     super(id, createdAt, updatedAt, QuotationEntity.tableName);
 
@@ -68,7 +72,7 @@ export class QuotationEntity extends BaseEntity {
       obj.customer ? CustomerEntity.create(obj.customer) : null,
       obj.branchOfficeId,
       obj.branchOffice ? BranchOfficeEntity.create(obj.branchOffice) : null,
-      obj.quotationDetails ? obj.quotationDetails.map((quotationDetail) => QuotationDetailEntity.create(quotationDetail)) : null,
+      obj.quotationDetails ? obj.quotationDetails.map((quotationDetail: any) => QuotationDetailsEntity.create(quotationDetail)) : null,
       obj.adressId,
       obj.address ? AddressEntity.create(obj.address) : null,
       obj.bill ? BillEntity.create(obj.bill) : null

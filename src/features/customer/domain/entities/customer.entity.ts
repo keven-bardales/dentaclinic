@@ -2,6 +2,8 @@ import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { CustomerTypesEnum } from "../enums/customer-types.enum";
 import { QuotationEntity } from "@/features/quotation/domain/entities/quotation.entity";
+import { PhoneEntity } from "@/features/phone/domain/entities/phone.entity";
+import { CustomerAddressEntity } from "@/features/customer-address/domain/entities/customer-address.entity";
 
 export class CustomerEntity extends BaseEntity {
   static tableName = "customer";
@@ -16,7 +18,7 @@ export class CustomerEntity extends BaseEntity {
     public rtn: string,
     public quotes: QuotationEntity[],
     public customerPhones: PhoneEntity[],
-    public customerAdress: CustomerAdressEntity[],
+    public customerAdress: CustomerAddressEntity[],
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper
   ) {

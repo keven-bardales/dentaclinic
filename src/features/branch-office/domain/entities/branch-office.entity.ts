@@ -1,9 +1,14 @@
+import { AddressEntity } from "@/features/address/domain/entities/address.entity";
+import { BillEntity } from "@/features/bill/domain/entities/bill-entity";
+import { BranchOfficeFaxEntity } from "@/features/branch-office-fax/domain/entities/branch-office-fax.entity";
+import { BranchOfficePhoneEntity } from "@/features/branch-office-phone/domain/entities/branch-office-phone.entity";
 import { BaseEntity } from "@/features/common/domain/entities/base.entity";
-import { TypesOfDocuments } from "@/features/common/domain/enums/document-types";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
-import { CustomerEntity } from "@/features/customer/domain/entities/customer.entity";
+import { CompanyEntity } from "@/features/company/domain/entities/company.entitity";
+import { EmployeeBranchOfficeEntity } from "@/features/employee-branch-office/domain/entities/employee-branch-office.entity";
 import { QuotationEntity } from "@/features/quotation/domain/entities/quotation.entity";
-import { Prisma } from "@prisma/client";
+import { UserBranchOfficeEntity } from "@/features/user-branch-office/domain/entity/user-branch-office.entity";
+import { WarehouseEntity } from "@/features/warehouse/domain/entities/warehouse.entity";
 
 export class BranchOfficeEntity extends BaseEntity {
   static tableName = "branchOffice";
@@ -42,52 +47,42 @@ export class BranchOfficeEntity extends BaseEntity {
   }
 
   static create(obj: any) {
-    return new QuotationEntity(
+    return new BranchOfficeEntity(
       obj.id,
-      new DateWrapper(obj.startDate),
-      new DateWrapper(obj.finalDate),
-      obj.project,
-      obj.code,
-      obj.total,
-      obj.subTotal,
-      obj.tax,
-      obj.discount,
-      obj.documentType,
-      obj.customerId,
+      obj.name,
+      obj.adressId,
       new DateWrapper(obj.createdAt),
       new DateWrapper(obj.updatedAt),
-      obj.customer ? CustomerEntity.create(obj.customer) : null,
-      obj.branchOfficeId,
-      obj.branchOffice ? BranchOfficeEntity.create(obj.branchOffice) : null,
-      obj.quotationDetails ? obj.quotationDetails.map((quotationDetail) => QuotationDetailEntity.create(quotationDetail)) : null,
-      obj.adressId,
-      obj.address ? AddressEntity.create(obj.address) : null,
-      obj.bill ? BillEntity.create(obj.bill) : null
+      obj.address,
+      obj.warehouses,
+      obj.bills,
+      obj.quotations,
+      obj.employeeBranchOffice,
+      obj.userBranchOffice,
+      obj.branchOfficePhones,
+      obj.branchOfficeFaxes,
+      obj.companyId,
+      obj.company
     );
   }
 
   toObject(): any {
     return {
       id: this.id,
-      startDate: this.startDate.toObject(),
-      finalDate: this.finalDate.toObject(),
-      project: this.project,
-      code: this.code,
-      total: this.total,
-      subTotal: this.subTotal,
-      tax: this.tax,
-      discount: this.discount,
-      documentType: this.documentType,
-      customerId: this.customerId,
+      name: this.name,
+      adressId: this.adressId,
       createdAt: this.createdAt.toObject(),
       updatedAt: this.updatedAt.toObject(),
-      customer: this.customer ? this.customer.toObject() : null,
-      branchOfficeId: this.branchOfficeId,
-      branchOffice: this.branchOffice ? this.branchOffice.toObject() : null,
-      quotationDetails: this.quotationDetails ? this.quotationDetails.map((quotationDetail) => quotationDetail.toObject()) : null,
-      adressId: this.adressId,
-      address: this.address ? this.address.toObject() : null,
-      bill: this.bill ? this.bill.toObject() : null,
+      address: this.address.toObject(),
+      warehouses: this.warehouses.map((warehouse) => warehouse.toObject()),
+      bills: this.bills.map((bill) => bill.toObject()),
+      quotations: this.quotations.map((quotation) => quotation.toObject()),
+      employeeBranchOffice: this.employeeBranchOffice.map((employeeBranchOffice) => employeeBranchOffice.toObject()),
+      userBranchOffice: this.userBranchOffice.map((userBranchOffice) => userBranchOffice.toObject()),
+      branchOfficePhones: this.branchOfficePhones.map((branchOfficePhone) => branchOfficePhone.toObject()),
+      branchOfficeFaxes: this.branchOfficeFaxes.map((branchOfficeFax) => branchOfficeFax.toObject()),
+      companyId: this.companyId,
+      company: this.company.toObject(),
     };
   }
 }

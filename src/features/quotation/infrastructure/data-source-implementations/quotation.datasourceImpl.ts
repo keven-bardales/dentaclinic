@@ -1,39 +1,24 @@
 import { BaseDataSourceImpl } from "@/features/common/infrastructure/datasource-implementation/base-datasource-implementation";
 import { db } from "@/lib/db/db";
-import { ModulePermissionEntity } from "../../domain/entities/modulePermission.entity";
+import { QuotationEntity } from "../../domain/entities/quotation.entity";
 
-export class ModulePermissionSourceImpl extends BaseDataSourceImpl<ModulePermissionEntity> {
+export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
   constructor() {
-    super(ModulePermissionEntity);
+    super(QuotationEntity);
   }
 
-  async getAllPermissionsWithModule(): Promise<ModulePermissionEntity[] | null> {
-    const permissions = await db.modulePermission.findMany({
+  async getAllQuotations() {
+    const quotations = await db.quotation.findMany({
       include: {
-        module: true,
+        customer: true,
+        branchOffice: true,
       },
     });
 
-    if (!permissions) {
+    if (!quotations) {
       return null;
     }
 
-    const created = permissions.map((permission) => {
-      return ModulePermissionEntity.create(permission);
-    });
-
-    return created;
-  }
-
-  async checkIfPermissionsExists(permissionsId: number[]): Promise<boolean> {
-    const permissions = await db.modulePermission.findMany({
-      where: {
-        id: {
-          in: permissionsId,
-        },
-      },
-    });
-
-    return permissions.length === permissionsId.length;
+    return quotations.map((quotation) => QuotationEntity.create(quotation));
   }
 }
