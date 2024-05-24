@@ -24,7 +24,7 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
       return NextResponse.next();
     }
 
-    const agendaUrl = new URL("/dashboard/agenda", request.url);
+    const agendaUrl = new URL("/dashboard/commercial/quotations", request.url);
     const loginUrl = new URL(`/auth/sign-in?pathname=${pathname}`, request.url);
     const basePath = new URL("/", request.url);
 
