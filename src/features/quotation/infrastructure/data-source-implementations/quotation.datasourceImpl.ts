@@ -21,4 +21,46 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
 
     return quotations.map((quotation) => QuotationEntity.create(quotation));
   }
+
+  async getById(id: number) {
+    const quotation = await db.quotation.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        customer: true,
+        branchOffice: true,
+        Address: true,
+        quotationDetails: {
+          include: {
+            product: {
+              include: {
+                category: {
+                  include: {
+                    parent: true,
+                  },
+                },
+              },
+            },
+            QuotationDetailDiscountCode: {
+              include: {
+                discountCode: true,
+              },
+            },
+            QuotationDetailTax: {
+              include: {
+                tax: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!quotation) {
+      return null;
+    }
+
+    return QuotationEntity.create(quotation);
+  }
 }

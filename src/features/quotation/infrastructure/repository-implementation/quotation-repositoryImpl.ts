@@ -10,4 +10,8 @@ export class QuotationRepositoryImpl extends BaseRepositoryImpl<QuotationEntity>
   getAllQuotations(): Promise<QuotationEntity[] | null> {
     return (this.dataSource as QuotationSourceImpl).getAllQuotations();
   }
+
+  getById(id: number): Promise<QuotationEntity | null> {
+    return (this.dataSource as QuotationSourceImpl).getById(id);
+  }
 }
