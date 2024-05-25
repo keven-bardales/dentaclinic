@@ -33,8 +33,6 @@ export default function QuotationsDataTable({ initialQuotations }: { initialQuot
   const router = useRouter();
   const [newQuotation, setnewQuotation] = useState(false);
 
-  console.log(quotations);
-
   const header = (
     <div className="flex flex-wrap items-center justify-between gap-2">
       <div className="text-2xl">Cotizaciones</div>

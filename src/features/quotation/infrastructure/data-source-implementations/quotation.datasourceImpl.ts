@@ -29,8 +29,22 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
       },
       include: {
         customer: true,
-        branchOffice: true,
-        Address: true,
+        branchOffice: {
+          include: {
+            address: true,
+            Company: true,
+            BranchOfficeFaxes: {
+              include: {
+                fax: true,
+              },
+            },
+            BranchOfficePhones: {
+              include: {
+                phone: true,
+              },
+            },
+          },
+        },
         quotationDetails: {
           include: {
             product: {
@@ -56,6 +70,8 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
         },
       },
     });
+
+    console.log(quotation?.branchOffice);
 
     if (!quotation) {
       return null;

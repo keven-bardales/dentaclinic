@@ -1,9 +1,13 @@
 import BasicPageWrapper from "@/app/(modules)/dashboard/(components)/basic-page-wrapper";
+import { getCachedCategories } from "./cached/get-cached-categories";
+import CategoriesDataTable from "./(components)/categories-data-table";
 
-export default function CategoriesPage() {
+export default async function CategoriesPage() {
+  const categories = await getCachedCategories();
+
   return (
     <BasicPageWrapper>
-      <h1>Categories Page</h1>
+      <CategoriesDataTable initialCategories={JSON.stringify(categories.data)}></CategoriesDataTable>
     </BasicPageWrapper>
   );
 }

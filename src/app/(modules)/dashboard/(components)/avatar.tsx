@@ -5,8 +5,6 @@ import { Avatar as PrimeAvatar } from "primereact/avatar";
 import { OverlayPanel } from "primereact/overlaypanel";
 import { useRef } from "react";
 import SignOutButton from "../../auth/(components)/sign-out-button";
-import { Button } from "primereact/button";
-import ThemeSwitcher from "./theme-switcher";
 
 export default function Avatar() {
   const session = useSession();

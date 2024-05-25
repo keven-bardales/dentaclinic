@@ -36,7 +36,7 @@ export class ProductCategoryEntity extends BaseEntity {
       new DateWrapper(obj.createdAt),
       new DateWrapper(obj.updatedAt),
       obj.parent,
-      obj.subCategories,
+      obj.subCategories?.map((category: any) => ProductCategoryEntity.create(category)),
       obj.products
     );
   }

@@ -15,7 +15,7 @@ import React from "react";
 import { ToastContextProvider } from "../toast-provider/toast-provider";
 import { NavigationEvents } from "../../(components)/navigation-events";
 import RememberMe from "../../(components)/handle-remember-me";
-import LoadingRemembermeLoader from "../../(components)/loading-sign-in-loader";
+import { cn } from "@/lib/utils/cn";
 
 export default function MainProviders({ children }: { children: ReactNode }) {
   addLocale("es", {
@@ -34,7 +34,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
   });
 
   return (
-    <SessionProvider session={null}>
+    <SessionProvider>
       <PrimeReactProvider
         value={{
           ptOptions: {},
@@ -65,7 +65,7 @@ export default function MainProviders({ children }: { children: ReactNode }) {
             },
             datatable: {
               root: {
-                className: "!min-h-full lg:max-h-full rounded-lg flex flex-col gap-y-4 p-datatable-striped",
+                className: cn("!min-h-full lg:max-h-[full] rounded-lg flex flex-col gap-y-4 p-datatable-striped"),
               },
               paginator: {
                 root: {

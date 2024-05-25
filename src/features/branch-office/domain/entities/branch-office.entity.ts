@@ -59,10 +59,10 @@ export class BranchOfficeEntity extends BaseEntity {
       obj.quotations,
       obj.employeeBranchOffice,
       obj.userBranchOffice,
-      obj.branchOfficePhones,
-      obj.branchOfficeFaxes,
+      obj.BranchOfficePhones,
+      obj.BranchOfficeFaxes,
       obj.companyId,
-      obj.company
+      obj.Company
     );
   }
 

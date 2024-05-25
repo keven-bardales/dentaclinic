@@ -13,7 +13,15 @@ export default function QuotationDetailDataTable({ quotation }: { quotation: Quo
   const normalNumberFormatter = new Intl.NumberFormat("es-HN");
 
   return (
-    <DataTable value={quotation.quotationDetails}>
+    <DataTable
+      scrollable
+      pt={{
+        root: {
+          style: { maxHeight: "600px" },
+        },
+      }}
+      value={quotation.quotationDetails}
+    >
       <Column field="product.name" header="Producto"></Column>
       <Column field="product.category.name" header="Categoría"></Column>
       <Column

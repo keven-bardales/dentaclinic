@@ -1,8 +1,7 @@
-"use server";
 import { loginUserSchema } from "../(schemas)/login-user.schema";
 import * as z from "zod";
 import { AuthError } from "next-auth";
-import { signIn } from "@/root/auth";
+import { signIn } from "next-auth/react";
 
 export const login = async (values: z.infer<typeof loginUserSchema>) => {
   const validatedFields = loginUserSchema.safeParse(values);
