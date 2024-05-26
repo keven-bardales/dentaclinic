@@ -12,7 +12,7 @@ export class TaxEntity extends BaseEntity {
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper,
     public quotationDetailTax: QuotationDetailTaxEntity[],
-    public billDetailTax: BillDetailTaxEntity[]
+    public billDetailTax: any[]
   ) {
     super(id, createdAt, updatedAt, TaxEntity.tableName);
 

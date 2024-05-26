@@ -1,5 +1,4 @@
 import { GetBySessionTokenUseCase } from "@/features/user/domain/use-cases/get-by-session-token-use-case";
-import { auth } from "@/root/auth";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {
@@ -10,6 +9,8 @@ export const POST = async (req: Request) => {
   }
 
   const sessionUser = await new GetBySessionTokenUseCase().execute(res.sessionToken);
+
+  console.log({ sessionUser });
 
   if (!sessionUser) {
     return NextResponse.json({ error: "Unauthorized2" }, { status: 401 });

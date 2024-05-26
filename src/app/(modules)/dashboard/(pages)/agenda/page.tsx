@@ -10,7 +10,6 @@ export default function AgendaPage() {
 
   const getUser = async () => {
     const user = await getCurrentUserSession();
-    console.log(user);
   };
 
   useEffect(() => {

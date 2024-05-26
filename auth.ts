@@ -78,18 +78,30 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         token.name = user?.name;
         token.permissions = user?.permissions;
         token.sessionToken = user?.session.sessionToken;
-        token.expiresAt = new Date(Date.now() + 10 * 60000);
+        token.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         return token;
       }
 
-      const expiresAt = new Date(token.expiresAt as string);
+      const dateFormatter = new Intl.DateTimeFormat("en", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+      });
+
+      if (!token.expiresAt) {
+        return null;
+      }
+
+      const expiresAt = token.expiresAt as Date;
       const today = new Date();
-
-      if (today < expiresAt) {
+      if (today < new Date(expiresAt)) {
         return token;
       }
-      if (today > expiresAt) {
+      if (today > new Date(expiresAt)) {
         const response = await fetch("http://localhost:3000/api/auth/refreshSession", {
           method: "POST",
           body: JSON.stringify({ sessionToken: token.sessionToken }),
@@ -108,7 +120,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         token.name = userSession?.name;
         token.permissions = userSession?.permissions;
         token.sessionToken = userSession?.session.sessionToken;
-        token.expiresAt = new Date(Date.now() + 10 * 6000);
+        token.expiresAt = new Date(Date.now() + 10 * 60 * 1000);
 
         if (userSession?.session?.rememberUser) {
           setCookie({
@@ -121,7 +133,7 @@ export const { signIn, signOut, auth, handlers } = NextAuth({
         return token;
       }
 
-      return token;
+      return null;
     },
     session: async ({ session, token, user, newSession, trigger }) => {
       if (token) {

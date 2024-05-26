@@ -33,11 +33,6 @@ export function authMiddleWare(middleware: CustomChainingMiddleware) {
     if (requestedRoute?.isProtected && !isLoggedIn) {
       return NextResponse.redirect(loginUrl);
     }
-
-    if (requestedRoute?.isProtected && !isLoggedIn) {
-      return NextResponse.redirect(loginUrl);
-    }
-
     const runRoutesMiddleWares = (middleWares: RouteMiddleware[], index = 0) => {
       const current = middleWares[index];
 

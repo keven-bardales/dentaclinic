@@ -1476,88 +1476,90 @@ const main = async () => {
       ],
     });
 
+    const categories = await db.productCategory.findMany();
+
     await db.product.createMany({
       data: [
         {
           name: "Tubo pvc 1/2 c20",
           description: "Tubo de pvc 1/2 c20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Conector pvc 1/2 C20",
           description: "Conector de pvc 1/2 C20",
-          categoryId: 2,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Union pvc 1/2 C20",
           description: "Union pvc 1/2 C20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Curva pvc 1/2 C20",
           description: "Curva pvc 1/2 C20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Caja 2x4x1/2",
           description: "Caja 2x4x1/2",
-          categoryId: 4,
+          categoryId: categories.find((category: any) => category.name === "Cajas")?.id,
         },
         {
           name: "Tubo Pvc 3/4 C20",
           description: "Tubo Pvc 3/4 C20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Conector Pvc 3/4 c20",
           description: "Conector Pvc 3/4 c20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Union pvc 3/4 C20",
           description: "Union pvc 3/4 C20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
         {
           name: "Cajas 2x4x3/4",
           description: "Cajas 2x4x3/4",
-          categoryId: 4,
+          categoryId: categories.find((category: any) => category.name === "Cajas")?.id,
         },
 
         {
           name: "Cajas 4x4x2 Mixta",
           description: "Cajas 4x4x2 Mixta",
-          categoryId: 4,
+          categoryId: categories.find((category: any) => category.name === "Cajas")?.id,
         },
 
         {
           name: "Curva pvc 3/4 c20",
           description: "Curva pvc 3/4 c20",
-          categoryId: 3,
+          categoryId: categories.find((category: any) => category.name === "Pvc")?.id,
         },
 
         {
           name: "Tacos s-8 s/t",
           description: "Tacos s-8 s/t",
-          categoryId: 5,
+          categoryId: categories.find((category: any) => category.name === "Grapas")?.id,
         },
 
         {
           name: "Grapas emt 1/2",
           description: "Grapas emt 1/2",
-          categoryId: 5,
+          categoryId: categories.find((category: any) => category.name === "Grapas")?.id,
         },
 
         {
           name: "Grapas emt 3/4",
           description: "Grapas emt 3/4",
-          categoryId: 5,
+          categoryId: categories.find((category: any) => category.name === "Grapas")?.id,
         },
 
         {
           name: "Cajas oct 1/2",
           description: "Cajas oct 1/2",
-          categoryId: 4,
+          categoryId: categories.find((category: any) => category.name === "Cajas")?.id,
         },
       ],
     });

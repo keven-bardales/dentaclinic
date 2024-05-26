@@ -20,7 +20,13 @@ import { useDashboardStore } from "@/app/(modules)/dashboard/(stores)/dashboard-
 export default function SignInPage() {
   const [state, setState] = useState({
     loadingLogin: false,
+    isClient: false,
   });
+
+  useEffect(() => {
+    setState({ ...state, isClient: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const { handleErrorsList, showToast } = useToast();
   const router = useRouter();
@@ -68,6 +74,7 @@ export default function SignInPage() {
   };
 
   if (isLogginRememberme) return null;
+  if (!state.isClient) return null;
 
   return (
     <main className="flex items-center justify-center w-full h-screen max-h-screen px-3 sm:px-5">

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
+import "@/lib/utils/big-int-solution";
 
 import MainProviders from "./(modules)/(shared)/providers/main-providers/main-providers";
 import { cn } from "../lib/utils/cn";

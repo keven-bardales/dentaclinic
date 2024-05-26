@@ -1,5 +1,4 @@
 import Image from "next/image";
-import "@/lib/utils/big-int-solution";
 
 export default function Home() {
   return (

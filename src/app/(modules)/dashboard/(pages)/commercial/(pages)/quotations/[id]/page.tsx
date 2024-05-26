@@ -7,8 +7,6 @@ import QuotationDetailDataTable from "../(components)/quotation-detail-data-tabl
 import QuotationsDetailComponent from "../(components)/quotation-detail";
 
 export default async function QuotationsDetailPage({ params }: { params: any }) {
-  console.log(params);
-
   const quotationId = params?.id;
 
   const quotation = await new GetQuotationByIdUseCase().execute(quotationId);

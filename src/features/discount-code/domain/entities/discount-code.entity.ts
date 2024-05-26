@@ -12,7 +12,7 @@ export class DiscountCodeEntity extends BaseEntity {
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper,
     public quotationDetailDiscountCode: QuotationDetailDiscountCodeEntity[],
-    public billDetailDiscountCode: BillDetailDiscountCodeEntity[]
+    public billDetailDiscountCode: any[]
   ) {
     super(id, createdAt, updatedAt, DiscountCodeEntity.tableName);
 

@@ -71,8 +71,6 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
       },
     });
 
-    console.log(quotation?.branchOffice);
-
     if (!quotation) {
       return null;
     }

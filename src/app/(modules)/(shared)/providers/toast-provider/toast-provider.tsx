@@ -1,5 +1,5 @@
 import { Toast, ToastMessage } from "primereact/toast";
-import React from "react";
+import React, { useEffect } from "react";
 import { ReactNode, createContext, useRef } from "react";
 
 const ToastContext = createContext({
@@ -58,6 +58,17 @@ export const ToastContextProvider = ({ children }: { children: ReactNode }) => {
 };
 
 export const useToast = () => {
+  const [IsClient, setIsClient] = React.useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+
+  if (!IsClient) {
+    return { showToast: () => {}, handleActionResponse: () => {}, handleErrorsList: () => {} };
+  }
+
+  // eslint-disable-next-line react-hooks/rules-of-hooks
   const context = React.useContext(ToastContext);
 
   if (context === undefined) {
