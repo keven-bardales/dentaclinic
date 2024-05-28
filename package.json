@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "cross-env NODE_OPTIONS='--max-http-header-size=12800000' next dev --turbo",
     "build": "next build",
-    "start": "NODE_OPTIONS='--max-http-header-size=12800000' next start",
+    "start": "cross-env NODE_OPTIONS='--max-http-header-size=12800000' next start",
     "studio": "NODE_OPTIONS='--max-http-header-size=12800000' prisma studio",
     "lint": "next lint"
   },

@@ -4,9 +4,11 @@ import { signOut } from "next-auth/react";
 import { Button } from "primereact/button";
 import { useDashboardStore } from "../../dashboard/(stores)/dashboard-store";
 import { deleteCookie } from "@/lib/utils/set-cookie";
+import { useRouter } from "next/navigation";
 
 export default function SignOutButton() {
   const setClosingSession = useDashboardStore((state) => state.setClosingSession);
+  const router = useRouter();
 
   return (
     <Button
@@ -23,9 +25,12 @@ export default function SignOutButton() {
 
         await artificialDelay;
 
-        const signOutPromise = signOut();
+        const signOutPromise = signOut({
+          redirect: false,
+        });
         signOutPromise.then(() => {
           setClosingSession(false);
+          router.push("/auth/sign-in");
         });
       }}
       className="p-button-text w-full h-full"
