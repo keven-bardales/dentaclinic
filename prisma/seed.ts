@@ -1,10 +1,11 @@
 // import { db } from "@/lib/db/db";
-import { CategoryLevel, CustomerTypes, DocumentTypes, PhoneStatus, PhoneType, PriceListStatus, Product, Quotation } from "@prisma/client";
+import { CustomerTypes, DocumentTypes, PhoneStatus, PhoneType, PriceListStatus, Product, Quotation } from "@prisma/client";
 
 const { faker } = require("@faker-js/faker");
 const { PrismaClient } = require("@prisma/client");
 const { bcryptAdapter } = require("./../src/features/common/adapters/bcryptjs.adapter");
 const db = new PrismaClient();
+// import { db } from "@/lib/db/db";
 
 const main = async () => {
   try {
@@ -1437,11 +1438,11 @@ const main = async () => {
       data: [
         {
           name: "Electrico",
-          categoryLevel: CategoryLevel.LEVEL_1,
+          categoryLevel: 1,
         },
         {
           name: "Plomeria",
-          categoryLevel: CategoryLevel.LEVEL_1,
+          categoryLevel: 1,
         },
       ],
     });
@@ -1450,27 +1451,27 @@ const main = async () => {
       data: [
         {
           name: "Cables",
-          categoryLevel: CategoryLevel.LEVEL_2,
+          categoryLevel: 2,
           parentId: 1,
         },
         {
           name: "Conectores",
-          categoryLevel: CategoryLevel.LEVEL_2,
+          categoryLevel: 2,
           parentId: 1,
         },
         {
           name: "Pvc",
-          categoryLevel: CategoryLevel.LEVEL_2,
+          categoryLevel: 2,
           parentId: 2,
         },
         {
           name: "Cajas",
-          categoryLevel: CategoryLevel.LEVEL_2,
+          categoryLevel: 2,
           parentId: 1,
         },
         {
           name: "Grapas",
-          categoryLevel: CategoryLevel.LEVEL_2,
+          categoryLevel: 2,
           parentId: 1,
         },
       ],
@@ -1755,7 +1756,7 @@ const main = async () => {
       for (const quotation of quotations) {
         for (const product of products) {
           const quantity = productWithData[product.name as keyof typeof productWithData].quantity as number;
-          const salePrice = product.productPriceList[0].salePrice as number;
+          const salePrice = product.productPriceList[0].salePrice;
 
           await db.quotationDetails.create({
             data: {
@@ -1768,12 +1769,12 @@ const main = async () => {
               discountPercentage: 0,
               priceWithDiscount: salePrice,
               priceWithTax: salePrice,
-              subTotal: salePrice * quantity,
-              subTotalWithDiscount: salePrice * quantity,
-              subTotalWithTax: salePrice * quantity + salePrice * quantity * 0.15,
-              taxAmount: salePrice * quantity * 0.15,
+              subTotal: salePrice.times(quantity),
+              subTotalWithDiscount: salePrice.times(quantity),
+              subTotalWithTax: salePrice.times(quantity).plus(salePrice.times(quantity).times(0.15)),
+              taxAmount: salePrice.times(quantity).times(0.15),
               taxPercentage: 15,
-              total: salePrice * quantity + salePrice * quantity * 0.15,
+              total: salePrice.times(quantity).plus(salePrice.times(quantity).times(0.15)),
             },
           });
         }

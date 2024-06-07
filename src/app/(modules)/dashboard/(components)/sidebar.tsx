@@ -225,6 +225,7 @@ export default function SidebarButton() {
       <Button
         rounded
         text
+        className="mr-auto"
         icon={"pi pi-bars"}
         onClick={() => {
           setSidebarMode(isOpen ? SidebarModes.HIDDEN : SidebarModes.OPEN);

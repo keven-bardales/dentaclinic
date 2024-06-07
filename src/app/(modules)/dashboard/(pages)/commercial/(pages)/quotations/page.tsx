@@ -12,8 +12,6 @@ export default async function QuotationsPage() {
 
   return (
     <BasicPageWrapper>
-      <div>Cotizaciones</div>
-
       <QuotationsDataTable initialQuotations={JSON.stringify(quotations.data)}></QuotationsDataTable>
     </BasicPageWrapper>
   );

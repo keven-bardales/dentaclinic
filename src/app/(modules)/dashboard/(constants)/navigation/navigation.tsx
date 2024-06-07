@@ -80,8 +80,8 @@ export const DashboardNavigation: NavigationItem[] = [
         isProtected: true,
         children: [
           {
-            title: "Children",
-            href: "/dashboard/reports/children2",
+            title: "Reporte 1",
+            href: "/",
             icon: <i className="pi pi-chart-line"></i>,
             permissions: [],
             middleWares: [],

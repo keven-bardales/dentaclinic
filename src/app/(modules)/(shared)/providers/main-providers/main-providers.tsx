@@ -6,11 +6,6 @@ import { SessionProvider } from "next-auth/react";
 
 import { addLocale } from "primereact/api";
 
-// import "primereact/resources/themes/lara-light-blue/theme.css";
-import "primereact/resources/themes/lara-dark-blue/theme.css";
-
-import "primereact/resources/primereact.min.css";
-import "primeicons/primeicons.css";
 import React from "react";
 import { ToastContextProvider } from "../toast-provider/toast-provider";
 import { NavigationEvents } from "../../(components)/navigation-events";
@@ -58,9 +53,9 @@ export default function MainProviders({ children }: { children: ReactNode }) {
                 className: "mt-auto",
               },
               RPPDropdown: {
-                wrapper: {
-                  className: "scrollbar-thin",
-                },
+                // wrapper: {
+                //   className: "scrollbar-thin",
+                // },
               },
             },
             datatable: {
@@ -74,11 +69,11 @@ export default function MainProviders({ children }: { children: ReactNode }) {
               },
               column: {
                 headerCell: {
-                  className: "font-extrabold bg-[#1C2532] text-white",
+                  className: "font-extrabold",
                 },
               },
               wrapper: {
-                className: "scrollbar-thin rounded-lg",
+                className: "rounded-lg",
               },
               bodyRow: {
                 className: "!p-0 cursor-pointer hover:bg-highlight",

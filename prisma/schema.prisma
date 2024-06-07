@@ -75,8 +75,8 @@ model User {
   accounts               Account[]
   sessions               Session[]
   userRoles              UserRoles[]
-  UserSettings           UserSettings[]
-  UserBranchOffice       UserBranchOffice[]
+  userSettings           UserSettings[]
+  userBranchOffice       UserBranchOffice[]
 }
 
 model UserBranchOffice {
@@ -146,9 +146,9 @@ model Bill {
   billDetails    BillDetails[]
   addressId      Int?
   branchOfficeId Int?
-  Address        Address?      @relation(fields: [addressId], references: [id])
+  address        Address?      @relation(fields: [addressId], references: [id])
   quotationId    BigInt?       @unique
-  Quotation      Quotation?    @relation(fields: [quotationId], references: [id])
+  quotation      Quotation?    @relation(fields: [quotationId], references: [id])
   branchOffice   BranchOffice? @relation(fields: [branchOfficeId], references: [id])
 }
 
@@ -173,8 +173,8 @@ model BillDetails {
   updatedAt              DateTime                 @updatedAt
   bill                   Bill                     @relation(fields: [billId], references: [id])
   product                Product                  @relation(fields: [productId], references: [id])
-  BillDetailTax          BillDetailTax[]
-  BillDetailDiscountCode BillDetailDiscountCode[]
+  billDetailTax          BillDetailTax[]
+  billDetailDiscountCode BillDetailDiscountCode[]
 }
 
 model BillDetailTax {
@@ -215,7 +215,7 @@ model Quotation {
   branchOfficeId   Int?
   quotationDetails QuotationDetails[]
   addressId        Int?
-  Address          Address?           @relation(fields: [addressId], references: [id])
+  address          Address?           @relation(fields: [addressId], references: [id])
   bill             Bill?
   branchOffice     BranchOffice?      @relation(fields: [branchOfficeId], references: [id])
 }
@@ -254,8 +254,8 @@ model QuotationDetails {
   updatedAt                   DateTime                      @updatedAt
   quotation                   Quotation                     @relation(fields: [quotationId], references: [id])
   product                     Product                       @relation(fields: [productId], references: [id])
-  QuotationDetailTax          QuotationDetailTax[]
-  QuotationDetailDiscountCode QuotationDetailDiscountCode[]
+  quotationDetailTax          QuotationDetailTax[]
+  quotationDetailDiscountCode QuotationDetailDiscountCode[]
 }
 
 model QuotationDetailTax {
@@ -284,8 +284,8 @@ model Tax {
   percentage         Decimal
   createdAt          DateTime             @default(now())
   updatedAt          DateTime             @updatedAt
-  QuotationDetailTax QuotationDetailTax[]
-  BillDetailTax      BillDetailTax[]
+  quotationDetailTax QuotationDetailTax[]
+  billDetailTax      BillDetailTax[]
 }
 
 model DiscountCode {
@@ -294,8 +294,8 @@ model DiscountCode {
   percentage                  Decimal
   createdAt                   DateTime                      @default(now())
   updatedAt                   DateTime                      @updatedAt
-  QuotationDetailDiscountCode QuotationDetailDiscountCode[]
-  BillDetailDiscountCode      BillDetailDiscountCode[]
+  quotationDetailDiscountCode QuotationDetailDiscountCode[]
+  billDetailDiscountCode      BillDetailDiscountCode[]
 }
 
 model BranchOffice {
@@ -306,13 +306,13 @@ model BranchOffice {
   updatedAt            DateTime               @updatedAt
   address              Address                @relation(fields: [addressId], references: [id])
   Warehouse            Warehouse[]
-  Bill                 Bill[]
-  Quotation            Quotation[]
-  EmployeeBranchOffice EmployeeBranchOffice[]
-  UserBranchOffice     UserBranchOffice[]
-  BranchOfficePhones   BranchOfficePhones[]
-  BranchOfficeFaxes    BranchOfficeFaxes[]
-  Company              Company                @relation(fields: [companyId], references: [id])
+  bill                 Bill[]
+  quotation            Quotation[]
+  employeeBranchOffice EmployeeBranchOffice[]
+  userBranchOffice     UserBranchOffice[]
+  branchOfficePhones   BranchOfficePhones[]
+  branchOfficeFaxes    BranchOfficeFaxes[]
+  company              Company                @relation(fields: [companyId], references: [id])
   companyId            Int
 }
 
@@ -349,10 +349,10 @@ model Product {
   updatedAt               DateTime                  @updatedAt
   productPriceList        ProductPriceList[]
   quoteDetails            QuotationDetails[]
-  ProductWarehouse        ProductWarehouse[]
-  ProductWarehouseHistory ProductWarehouseHistory[]
-  ProductPricelistHistory ProductPricelistHistory[]
-  BillDetails             BillDetails[]
+  productWarehouse        ProductWarehouse[]
+  productWarehouseHistory ProductWarehouseHistory[]
+  productPricelistHistory ProductPricelistHistory[]
+  billDetails             BillDetails[]
   category                ProductCategory           @relation(fields: [categoryId], references: [id])
 }
 
@@ -395,7 +395,7 @@ model PriceList {
   createdAt               DateTime                  @default(now())
   updatedAt               DateTime                  @updatedAt
   priceList               ProductPriceList[]
-  ProductPricelistHistory ProductPricelistHistory[]
+  productPricelistHistory ProductPricelistHistory[]
 }
 
 enum PriceListStatus {
@@ -441,11 +441,11 @@ model Warehouse {
   description             String?
   createdAt               DateTime                  @default(now())
   updatedAt               DateTime                  @updatedAt
-  ProductWarehouse        ProductWarehouse[]
-  Address                 Address?                  @relation(fields: [addressId], references: [id])
+  productWarehouse        ProductWarehouse[]
+  address                 Address?                  @relation(fields: [addressId], references: [id])
   addressId               Int?
   branchOfficeId          Int?
-  ProductWarehouseHistory ProductWarehouseHistory[]
+  productWarehouseHistory ProductWarehouseHistory[]
   warehouseStatus         WarehouseStatus
   branchOffice            BranchOffice?             @relation(fields: [branchOfficeId], references: [id])
 }
@@ -459,17 +459,14 @@ model ProductCategory {
   id            Int               @id @default(autoincrement())
   name          String
   parentId      Int?
-  categoryLevel CategoryLevel
+  categoryLevel Int
   createdAt     DateTime          @default(now())
   updatedAt     DateTime          @updatedAt
+  deletedAt     DateTime?
+  isDeleted     Boolean           @default(false)
   parent        ProductCategory?  @relation("ProductCategoryToProductCategory", fields: [parentId], references: [id])
   subCategories ProductCategory[] @relation("ProductCategoryToProductCategory")
-  Product       Product[]
-}
-
-enum CategoryLevel {
-  LEVEL_1
-  LEVEL_2
+  product       Product[]
 }
 
 model Customer {
@@ -483,7 +480,7 @@ model Customer {
   quotes         Quotation[]
   customerPhones Phone[]
   customerAdress CustomerAdress[]
-  Bill           Bill[]
+  bill           Bill[]
   createdAt      DateTime         @default(now())
   updatedAt      DateTime         @updatedAt
 }
@@ -516,8 +513,8 @@ model Phone {
   customer           Customer?            @relation(fields: [customerId], references: [id])
   provider           Provider?            @relation(fields: [providerId], references: [id])
   employee           Employee?            @relation(fields: [employeeId], references: [id])
-  BranchOfficePhones BranchOfficePhones[]
-  CompanyPhones      CompanyPhones[]
+  branchOfficePhones BranchOfficePhones[]
+  companyPhones      CompanyPhones[]
 }
 
 model Fax {
@@ -527,8 +524,8 @@ model Fax {
   type              PhoneType
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
-  BranchOfficeFaxes BranchOfficeFaxes[]
-  CompanyFaxes      CompanyFaxes[]
+  branchOfficeFaxes BranchOfficeFaxes[]
+  companyFaxes      CompanyFaxes[]
 }
 
 enum PhoneStatus {
@@ -549,7 +546,7 @@ model Country {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   states    State[]
-  Address   Address[]
+  address   Address[]
 }
 
 model State {
@@ -561,7 +558,7 @@ model State {
   updatedAt DateTime  @updatedAt
   country   Country   @relation(fields: [countryId], references: [id])
   cities    City[]
-  Address   Address[]
+  address   Address[]
 }
 
 model City {
@@ -573,7 +570,7 @@ model City {
   updatedAt     DateTime       @updatedAt
   state         State          @relation(fields: [stateId], references: [id])
   neighborhoods Neighborhood[]
-  Address       Address[]
+  address       Address[]
 }
 
 model Neighborhood {
@@ -584,7 +581,7 @@ model Neighborhood {
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   city      City      @relation(fields: [cityId], references: [id])
-  Address   Address[]
+  address   Address[]
 }
 
 model Address {
@@ -605,12 +602,12 @@ model Address {
   neighborhood     Neighborhood?     @relation(fields: [neighborhoodId], references: [id])
   warehouses       Warehouse[]
   employees        Employee[]
-  ProviderAdress   ProviderAdress[]
-  EmployeeAddress  EmployeeAddress[]
-  CustomerAdress   CustomerAdress[]
-  Bill             Bill[]
-  Quotation        Quotation[]
-  BranchOffice     BranchOffice[]
+  providerAdress   ProviderAdress[]
+  employeeAddress  EmployeeAddress[]
+  customerAdress   CustomerAdress[]
+  bill             Bill[]
+  quotation        Quotation[]
+  branchOffice     BranchOffice[]
 }
 
 model Provider {
@@ -619,7 +616,7 @@ model Provider {
   lastName       String
   fullName       String
   phone          Phone[]
-  ProviderAdress ProviderAdress[]
+  providerAdress ProviderAdress[]
 }
 
 model ProviderAdress {
@@ -640,8 +637,8 @@ model Employee {
   phones               Phone[]
   Address              Address?               @relation(fields: [addressId], references: [id])
   addressId            Int?
-  EmployeeAddress      EmployeeAddress[]
-  EmployeeBranchOffice EmployeeBranchOffice[]
+  employeeAddress      EmployeeAddress[]
+  employeeBranchOffice EmployeeBranchOffice[]
   createdAt            DateTime               @default(now())
   updatedAt            DateTime               @updatedAt
 }
@@ -675,8 +672,8 @@ model Company {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
   branches      BranchOffice[]
-  CompanyFaxes  CompanyFaxes[]
-  CompanyPhones CompanyPhones[]
+  companyFaxes  CompanyFaxes[]
+  companyPhones CompanyPhones[]
 }
 
 model CompanyFaxes {

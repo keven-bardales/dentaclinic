@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import "primeicons/primeicons.css";
+import "primereact/resources/primereact.css";
 import "./globals.css";
 import "@/lib/utils/big-int-solution";
 
@@ -20,8 +22,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className="scrollbar-thumb-[#5898E6] scrollbar-track-[#1F2937]" lang="en">
+    <html lang="en">
       <head>
+        <link id="theme-css" href={`/themes/lara-dark-blue/theme.css`} rel="stylesheet"></link>
         <script
           dangerouslySetInnerHTML={{
             __html: `

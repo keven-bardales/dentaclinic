@@ -1,5 +1,6 @@
 import LoadingRemembermeLoader from "../(shared)/(components)/loading-sign-in-loader";
 import Avatar from "./(components)/avatar";
+import ChangeThemeButton from "./(components)/change-theme";
 import ClosingSessionLoader from "./(components)/closing-session";
 import MainContentWrapper from "./(components)/main-content-wrapper";
 import SidebarButton from "./(components)/sidebar";
@@ -12,8 +13,9 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
       <ClosingSessionLoader />
       <MainContentWrapper>
         <div className="overflow-auto scrollbar-thin flex flex-col items-center mx-auto max-w-[1920px] h-full w-full">
-          <header className="w-full p-4 pt-7 max-h-[50px] flex justify-between max-w-[1920px] mx-auto items-center">
+          <header className="w-full p-4 pt-7 max-h-[50px] flex justify-end gap-x-3 max-w-[1920px] mx-auto items-center">
             <SidebarButton />
+            <ChangeThemeButton />
             <Avatar />
           </header>
           {children}

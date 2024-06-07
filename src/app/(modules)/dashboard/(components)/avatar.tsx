@@ -3,8 +3,11 @@
 import { useSession } from "next-auth/react";
 import { Avatar as PrimeAvatar } from "primereact/avatar";
 import { OverlayPanel } from "primereact/overlaypanel";
-import { useRef } from "react";
+import { useContext, useRef } from "react";
 import SignOutButton from "../../auth/(components)/sign-out-button";
+import { Button } from "primereact/button";
+import { PrimeReactContext } from "primereact/api";
+import { Sun } from "lucide-react";
 
 export default function Avatar() {
   const session = useSession();

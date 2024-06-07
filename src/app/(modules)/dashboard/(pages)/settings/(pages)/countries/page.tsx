@@ -1,11 +1,13 @@
 import BasicPageWrapper from "@/app/(modules)/dashboard/(components)/basic-page-wrapper";
+import CountriesDataTable from "./(components)/countries-data-table";
+import { getCachedCountries } from "./cache/get-cached-countries";
 
-export default async function ModulesPage() {
-  //   const modules = await getCachedModules();
+export default async function CountriesPage() {
+  const countriesData = await getCachedCountries();
 
   return (
     <BasicPageWrapper>
-      <div>Paises</div>
+      <CountriesDataTable initialCountries={JSON.stringify(countriesData.data)}></CountriesDataTable>
     </BasicPageWrapper>
   );
 }

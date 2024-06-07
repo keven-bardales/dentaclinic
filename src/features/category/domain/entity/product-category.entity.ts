@@ -1,7 +1,6 @@
 import { BaseEntity } from "@/features/common/domain/entities/base.entity";
 import { DateWrapper } from "@/features/common/wrappers/date-wrraper";
 import { ProductEntity } from "@/features/product/domain/entities/product.entity";
-import { CategoryLevelEnum } from "../enums/product-category-level.enum";
 
 export class ProductCategoryEntity extends BaseEntity {
   static tableName = "product_category";
@@ -10,7 +9,7 @@ export class ProductCategoryEntity extends BaseEntity {
     public id: number,
     public name: string,
     public parentId: number | null,
-    public categoryLevel: CategoryLevelEnum,
+    public categoryLevel: number,
     public createdAt: DateWrapper,
     public updatedAt: DateWrapper,
     public parent: ProductCategoryEntity | null,

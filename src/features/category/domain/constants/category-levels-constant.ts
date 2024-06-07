@@ -1,0 +1,1 @@
+export const VALIDCATEGORYLEVELS = [1, 2];
