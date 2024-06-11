@@ -32,13 +32,13 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
         branchOffice: {
           include: {
             address: true,
-            Company: true,
-            BranchOfficeFaxes: {
+            company: true,
+            branchOfficeFaxes: {
               include: {
                 fax: true,
               },
             },
-            BranchOfficePhones: {
+            branchOfficePhones: {
               include: {
                 phone: true,
               },
@@ -56,12 +56,12 @@ export class QuotationSourceImpl extends BaseDataSourceImpl<QuotationEntity> {
                 },
               },
             },
-            QuotationDetailDiscountCode: {
+            quotationDetailDiscountCode: {
               include: {
                 discountCode: true,
               },
             },
-            QuotationDetailTax: {
+            quotationDetailTax: {
               include: {
                 tax: true,
               },

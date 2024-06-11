@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { NavBarItem } from "./nav-bar-item";
 
 interface NavBarProps {
   className: string;
@@ -6,19 +6,24 @@ interface NavBarProps {
 
 const landingNavBarItems = [
   {
-    content: "HOME",
+    content: "INICIO",
+    href: "/home",
   },
   {
-    content: "SHOP",
+    content: "TIENDA",
+    href: "/shop",
   },
   {
     content: "BLOG",
+    href: "/blog",
   },
   {
-    content: "ABOUT US",
+    content: "NOSOTROS",
+    href: "/about-us",
   },
   {
-    content: "CONTACT US",
+    content: "CONTACTO",
+    href: "/contact-us",
   },
 ];
 
@@ -26,26 +31,10 @@ export default function NavBar({ className }: NavBarProps) {
   return (
     <div className={className}>
       {landingNavBarItems.map((item, index) => (
-        <NavBarItem key={index} href={"/landing/" + item.content.toLowerCase().replace(" ", "-")}>
+        <NavBarItem key={index} href={item.href}>
           {item.content}
         </NavBarItem>
       ))}
     </div>
-  );
-}
-
-interface NavBarItemProps {
-  children: React.ReactNode;
-  href: string;
-}
-
-function NavBarItem({ children, href }: NavBarItemProps) {
-  return (
-    <Link
-      className="text-landing-secondary-main font-bold text-lg px-2 py-2 hover:bg-landing-primary-main hover:text-white rounded-lg transition-all duration-300"
-      href={href}
-    >
-      {children}
-    </Link>
   );
 }

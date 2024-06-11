@@ -14,14 +14,15 @@ export class DateWrapper {
     this.date = new Date();
     if (dateString instanceof DateWrapper) {
       this.date = new Date(dateString.toTimestamp);
-    }
-
-    if (dateString instanceof Date) {
+    } else if (dateString instanceof Date) {
       this.date = dateString;
-    }
-
-    if (typeof dateString === "string") {
+    } else if (typeof dateString === "string") {
       this.date = new Date(dateString);
+    } else {
+      let newValue = dateString as any;
+      if(newValue?.date) {
+      this.date = new Date(newValue.date as any);
+      }
     }
 
     this.toString = this.date.toString();

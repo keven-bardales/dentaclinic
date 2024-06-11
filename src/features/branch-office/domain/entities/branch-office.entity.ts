@@ -53,14 +53,14 @@ export class BranchOfficeEntity extends BaseEntity {
       obj.adressId,
       new DateWrapper(obj.createdAt),
       new DateWrapper(obj.updatedAt),
-      obj.address,
+      AddressEntity.create(obj.address),
       obj.warehouses,
       obj.bills,
       obj.quotations,
       obj.employeeBranchOffice,
       obj.userBranchOffice,
-      obj.BranchOfficePhones,
-      obj.BranchOfficeFaxes,
+      obj.branchOfficePhones,
+      obj.branchOfficeFaxes,
       obj.companyId,
       obj.Company
     );
